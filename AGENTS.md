@@ -34,10 +34,10 @@ nlab-agent uses the `.nlab/` directory for persistent state:
 The following is a high-level map of available skill categories. **Always check the `skills/` directory for the full list and latest documentation.**
 
 ### 📝 PM & Planning
-- `writing-plans`, `brainstorming`, `autoresearch`, `deep-interview`
+- `writing-plans`, `brainstorming`, `autoresearch`, `deep-interview`, `create-gh-issue`
 
 ### 🛠 Engineering & Debugging
-- `systematic-debugging`, `autopilot`, `test-driven-development`, `finishing-a-development-branch`, `create-gh-issue`
+- `systematic-debugging`, `autopilot`, `test-driven-development`, `finishing-a-development-branch`
 
 ### 🛡 Quality & Workflow
 - `requesting-code-review`, `receiving-code-review`, `verification-before-completion`
