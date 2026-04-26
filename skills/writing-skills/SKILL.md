@@ -24,3 +24,8 @@ description: Use when creating or updating Antigravity skills. Applies TDD princ
 - "It's too simple to need a skill."
 - "I'll just remember this next time."
 - "The spirit of the rule matters more than the ritual." (Spirit vs Letter)
+
+## Deployment Checklist
+- [ ] Create/Update the `SKILL.md` file.
+- [ ] Register the new skill name in `AGENTS.md` under the correct category.
+- [ ] Run the `setup.sh` script to link the new skill to Antigravity.

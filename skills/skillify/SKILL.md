@@ -16,7 +16,8 @@ Capture a successful multi-step workflow discovered during a session into a conc
    - Success criteria and verification methods.
    - Constraints and common pitfalls.
 3. **Draft**: Output a complete `SKILL.md` file starting with YAML frontmatter.
-4. **Propose**: Suggest where the new skill should be saved (e.g., in `nlab-agent/skills/`).
+4. **Register**: Add the new skill name to the appropriate category in `AGENTS.md`.
+5. **Propose**: Suggest where the new skill should be saved (e.g., in `nlab-agent/skills/`).
 
 ## Rules
 - Only capture workflows that are actually repeatable.

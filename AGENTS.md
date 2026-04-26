@@ -12,53 +12,40 @@ This repository defines the core capabilities, operating protocols, and state-ma
 
 <working_agreements>
 - All implementation work must follow the TDD cycle when applicable.
-- Code reviews must be rigorous and evidence-driven, not performative.
+- Code reviews must be rigorous and evidence-driven.
 - Use `deep-interview` to resolve ambiguity before starting high-effort tasks.
-- Keep the `skills/` directory as the source of truth for all agent behaviors.
+- **Source of Truth**: The `skills/` directory is the primary source of truth. Always browse it to discover the latest tools.
 </working_agreements>
 
 <state_management>
-nlab-agent uses the `.nlab/` directory for persistent state and context preservation:
-- `.nlab/state/` -- Mode-specific state files (JSON) for resuming interrupted tasks.
-- `.nlab/plans/` -- Durable implementation plans and roadmaps.
-- `.nlab/memory/` -- Project-level knowledge and decision logs.
-
-**Requirement**: Before concluding any major phase, update the relevant state files to ensure the next session can resume with full context.
+nlab-agent uses the `.nlab/` directory for persistent state:
+- `.nlab/state/` -- Mode state files (JSON).
+- `.nlab/plans/` -- Implementation plans.
+- `.nlab/memory/` -- Project decision logs.
 </state_management>
 
 <model_resolution>
-Apply the following model-tier mapping based on task complexity:
-- **Strategic (Planning, Architecture, PM)**: Use high-reasoning models (e.g., Opus-tier) to ensure structural integrity.
-- **Tactical (Implementation, Refactoring, Tests)**: Use balanced models (e.g., Sonnet-tier) for efficient and accurate coding.
-- **Verification (QA, Linting, Simple Fixes)**: Use fast models (e.g., Haiku-tier) for rapid iteration cycles.
-
-*Note: Antigravity should automatically adjust its "thought depth" based on these tiers.*
+- **Strategic (PM/Arch)**: Use high-reasoning models (Opus-tier).
+- **Tactical (Coding)**: Use balanced models (Sonnet-tier).
+- **Verification (QA)**: Use fast models (Haiku-tier).
 </model_resolution>
 
 <skills>
-## 📝 PM & Planning
-- **`writing-plans`**: Create structured implementation plans with atomic, verifiable tasks.
-- **`brainstorming`**: Facilitate divergent thinking for feature ideation and UX improvements.
-- **`autoresearch`**: Automatically synthesize information from web searches and documentation.
-- **`deep-interview`**: Use Socratic questioning to reduce ambiguity in requirements.
+The following is a high-level map of available skill categories. **Always check the `skills/` directory for the full list and latest documentation.**
 
-## 🛠 Engineering & Debugging
-- **`systematic-debugging`**: Hypothesis-driven debugging for complex Android/Logic issues.
-- **`autopilot`**: Execute multi-phase autonomous workflows for complex feature builds.
-- **`test-driven-development`**: Ensure code correctness through Red-Green-Refactor cycles.
-- **`finishing-a-development-branch`**: Guide the merge and PR process with structured options.
+### 📝 PM & Planning
+- `writing-plans`, `brainstorming`, `autoresearch`, `deep-interview`
 
-## 🛡 Quality & Workflow
-- **`requesting-code-review`**: Dispatch a focused review subagent to catch regressions.
-- **`receiving-code-review`**: Process feedback with technical rigor and reasoned pushback.
-- **`verification-before-completion`**: Mandatory gate for evidence-backed completion claims.
+### 🛠 Engineering & Debugging
+- `systematic-debugging`, `autopilot`, `test-driven-development`, `finishing-a-development-branch`
 
-## 🧠 Knowledge & Meta
-- **`remember`**: Capture and organize session-persistent knowledge.
-- **`writing-skills`**: TDD-based guide for creating high-quality new skills.
-- **`skillify`**: Automatically transform successful workflows into reusable skill drafts.
+### 🛡 Quality & Workflow
+- `requesting-code-review`, `receiving-code-review`, `verification-before-completion`
+
+### 🧠 Knowledge & Meta
+- `remember`, `writing-skills`, `skillify`
 </skills>
 
 <cancellation>
-If a task is blocked or the goal has changed, invoke the appropriate cancellation protocol to clear agent state and preserve logs.
+Invoke cancellation protocols to clear agent state and preserve logs if a task is blocked.
 </cancellation>
