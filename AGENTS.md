@@ -46,6 +46,18 @@ The following is a high-level map of available skill categories. **Always check 
 - `remember`, `writing-skills`, `skillify`
 </skills>
 
+<platforms>
+nlab-agent supports multiple AI agent environments. Use the setup scripts in `platforms/` to initialize protocols for your specific agent.
+
+### 🌌 Antigravity
+- **Setup**: `./platforms/antigravity/setup.sh`
+- **Focus**: Global skill integration and project protocols.
+
+### 🤖 Claude Code
+- **Setup**: `./platforms/claude/setup.sh`
+- **Focus**: Project-level protocol recognition via `CLAUDE.md`.
+</platforms>
+
 <cancellation>
 Invoke cancellation protocols to clear agent state and preserve logs if a task is blocked.
 </cancellation>
