@@ -5,7 +5,7 @@ A collection of AI agent skills and instructions for Antigravity, Cursor, and mo
 ## Project Structure
 - `skills/`: Platform-agnostic AI skill definitions (Markdown).
 - `platforms/`: Platform-specific setup scripts and configurations.
-  - `antigravity/`: Antigravity-specific setup.
+- `CONTRIBUTING.md`: **Core development guidelines and commit conventions (MUST follow).**
 
 ## Installation
 
