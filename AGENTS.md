@@ -13,7 +13,6 @@ This repository defines the core capabilities, operating protocols, and state-ma
 <working_agreements>
 - All implementation work must follow the TDD cycle when applicable.
 - Code reviews must be rigorous and evidence-driven.
-- **Code Review Response Policy**: When responding to review comments, strictly follow the `Commit -> Push -> Comment` sequence. Every response must mention the reviewer, provide technical rationale, and include a link to the change.
 - Use `deep-interview` to resolve ambiguity before starting high-effort tasks.
 - **Source of Truth**: The `skills/` directory is the primary source of truth. Always browse it to discover the latest tools.
 </working_agreements>
