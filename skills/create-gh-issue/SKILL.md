@@ -21,18 +21,33 @@ This skill ensures that all GitHub issues created within this repository follow 
    - **Problem**: Clearly define the issue or the current gap.
    - **Needs**: List what is required to solve the problem or the desired outcome.
    - Include relevant files or code snippets if necessary.
-3. **Labels**: Always assign at least one relevant label (e.g., `bug`, `enhancement`, `documentation`, `high-priority`).
+   - **Formatting**: Do NOT use `\n` literal strings in the command. Instead, use a multi-line string or save the body to a temporary file and use the `--body-file` flag for reliable formatting.
+3. **Labels**: Always assign at least one relevant label. **Verify that the label exists** in the repository using `gh label list` before running the create command.
 4. **Project/Milestone**: (Optional) Assign to a project or milestone if applicable.
 
 ## Red Flags
 - Creating issues with vague titles like "Fix bug".
-- Forgetting to add labels.
+- Forgetting to add labels or using non-existent labels.
+- Using literal `\n` in the body string, which leads to unreadable issues.
 - Creating an issue without checking if a duplicate already exists.
 
-## Example
+## Example (Recommended approach)
 ```bash
+# 1. Create a temporary body file
+cat <<EOF > issue_body.md
+### Problem
+Currently, there is no standardized way to create issues through Antigravity skills.
+
+### Needs
+- A new skill `create-gh-issue` defining a clear template.
+EOF
+
+# 2. Create the issue using the file
 gh issue create \
   --title "[Feature] Add GitHub Issue Creation Skill" \
-  --body "### Problem\nCurrently, there is no standardized way to create issues through Antigravity skills, leading to inconsistent and hard-to-read issues.\n\n### Needs\n- A new skill \`create-gh-issue\` defining a clear template.\n- Body must include 'Problem' and 'Needs' sections for human readability." \
+  --body-file issue_body.md \
   --label "enhancement"
+
+# 3. Cleanup
+rm issue_body.md
 ```
