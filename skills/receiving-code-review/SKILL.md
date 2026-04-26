@@ -24,16 +24,14 @@ description: Use when receiving code review feedback. Ensures technical rigor an
 5. **RESPOND**: Reply to the thread using the templates below.
 
 ## Response Templates
-Use these patterns to maintain professional rigor:
+Use this standardized format for all replies:
 
-### Critical/Blocking Feedback
-> "@[reviewer], I've analyzed the issue. The suggested change prevents [problem]. I've implemented the fix in [commit-hash] and verified it with [test-command]."
+> "@[reviewer], [What was modified/fixed]. You can find the changes in [commit-hash]. [Optional: technical rationale or verification result]."
 
-### Technical Push-back
-> "@[reviewer], I've evaluated this suggestion against the current architecture. Implementing this would [negative-impact, e.g., break X or introduce Y]. I recommend [alternative] instead because [reason]."
-
-### Minor/Style Feedback
-> "@[reviewer], Fixed as suggested in [commit-hash]. Verification passed."
+### Example Variations:
+- **Standard Fix**: "@reviewer, I've updated the boundary check to handle null values. You can find the changes in a1b2c3d. Verified with `npm test`."
+- **Technical Push-back**: "@reviewer, I've evaluated the suggestion to use X. However, implementing this would [negative-impact]. I've kept the current implementation but added comments for clarity in e4f5g6h."
+- **Minor Fix**: "@reviewer, Fixed the typo in the documentation. Changes are in i7j8k9l."
 
 ## Evaluation Checklist
 Before clicking "Reply", ask yourself:
