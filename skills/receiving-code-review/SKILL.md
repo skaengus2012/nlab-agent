@@ -6,7 +6,13 @@ description: Use when receiving code review feedback. Ensures technical rigor an
 # Code Review Reception
 
 ## Core Principle
-**Verify before implementing. Ask before assuming. Technical correctness over social comfort.**
+**Verify before implementing. Ask before assuming. Technical correctness over social comfort. No skips: Verification is mandatory for every commit.**
+
+## Common Failure Modes (RED FLAGS)
+- **Bundling Fixes**: Committing multiple feedback items in one commit. (Must commit separately)
+- **Verification Bypass**: Skipping `verification-before-completion` because the change "seems simple".
+- **Compliance Bias**: Agreeing with the reviewer without technical validation.
+- **Workspace Friction**: Skipping tests due to environment/path issues. (Must solve technically)
 
 ## The Rigorous Response Workflow
 1. **READ**: Read all comments in the thread first. Do not start implementing immediately.
@@ -19,9 +25,9 @@ description: Use when receiving code review feedback. Ensures technical rigor an
    - **Clarify**: If the intent is unclear.
    - **Push Back**: If the suggestion is technically incorrect, introduces debt, or violates project rules (e.g., YAGNI).
 4. **IMPLEMENT & VERIFY**:
-   - **Commit** the fix for each comment separately.
-   - **Mandatory**: Run the `verification-before-completion` skill for every change.
-5. **RESPOND**: Reply to the thread using the templates below.
+   - **Commit** the fix for each comment separately. **Do not bundle multiple fixes.**
+   - **Mandatory**: Run the `verification-before-completion` skill for every single change/commit.
+5. **RESPOND**: Reply to each comment thread individually using the templates below.
 
 ## Response Templates
 Use this standardized format for all replies:

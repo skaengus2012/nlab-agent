@@ -16,6 +16,7 @@ Before claiming any status or saying "I'm done":
 - Using words like "should", "probably", or "seems to".
 - Claiming success because a previous run worked.
 - Trusting your own assumptions without running the verification command.
+- **Environment Friction**: Skipping because "the test is hard to run in this workspace". (Must solve the setup issue instead)
 
 ## Checklist
 - [ ] Tests pass (with output evidence).
