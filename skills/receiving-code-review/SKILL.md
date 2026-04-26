@@ -10,11 +10,15 @@ description: Use when receiving code review feedback. Ensures technical rigor an
 
 ## The Response Pattern
 1. **READ**: Complete feedback without reacting.
-2. **UNDERSTAND**: Restate requirement in own words or ask for clarification.
+2. **UNDERSTAND**: Address comments individually. Restate requirement or ask for clarification.
 3. **VERIFY**: Check against codebase reality.
 4. **EVALUATE**: Is this technically sound for THIS specific codebase?
-5. **RESPOND**: Technical acknowledgment or reasoned pushback.
-6. **IMPLEMENT**: One item at a time, test each.
+5. **IMPLEMENT**: **Commit** the fix for the specific comment.
+6. **SYNC**: **Push** to remote.
+7. **RESPOND**: **Comment** on the review with:
+    - @mention of the reviewer.
+    - Technical rationale for the change (or non-change).
+    - Link to the commit/diff.
 
 ## Handling Feedback
 - **NEVER** use performative agreement like "You're absolutely right!" or "Great point!".
@@ -31,3 +35,7 @@ description: Use when receiving code review feedback. Ensures technical rigor an
 3. Simple fixes (typos, imports).
 4. Complex fixes (refactoring, logic).
 5. Test each fix individually.
+
+## Unresolved Comments
+- Always handle unresolved comments before closing the review cycle.
+- If a comment cannot be addressed immediately, provide a clear timeline or reason for postponement.
