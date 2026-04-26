@@ -26,36 +26,26 @@ description: Use when receiving code review feedback. Ensures technical rigor an
 ## Response Templates
 Use this standardized format for all replies:
 
-> @[reviewer]
->
+> @[reviewer],
 > [What was modified/fixed/evaluated]
->
 > [commit-hash]
->
 > [Optional: technical rationale or verification result]
 
 ### Example Variations:
 - **Standard Fix**:
-  > @reviewer
-  >
+  > @reviewer,
   > I've updated the boundary check to handle null values.
-  >
   > a1b2c3d
-  >
   > Verified with `npm test`.
 
 - **Technical Push-back**:
-  > @reviewer
-  >
+  > @reviewer,
   > I've evaluated the suggestion to use X. However, implementing this would [negative-impact]. I've kept the current implementation but added comments for clarity.
-  >
   > e4f5g6h
 
 - **Minor Fix**:
-  > @reviewer
-  >
+  > @reviewer,
   > Fixed the typo in the documentation.
-  >
   > i7j8k9l
 
 ## Evaluation Checklist
@@ -71,12 +61,9 @@ Before clicking "Reply", ask yourself:
 > *Problem: No technical substance, shows blind compliance.*
 
 ### ✅ Good Response (Technical Rigor)
-> @reviewer
->
+> @reviewer,
 > I've verified the edge case you mentioned. The current logic indeed fails when [condition]. I've updated the boundary check and added a regression test.
->
 > a1b2c3d
->
 > Verified with `npm test`.
 
 ## Handling Feedback
