@@ -71,7 +71,13 @@ Before clicking "Reply", ask yourself:
 > *Problem: No technical substance, shows blind compliance.*
 
 ### ✅ Good Response (Technical Rigor)
-> "@reviewer, I've verified the edge case you mentioned. The current logic indeed fails when [condition]. I've updated the boundary check in [commit-hash] and added a regression test. Verified with `npm test`."
+> @reviewer
+>
+> I've verified the edge case you mentioned. The current logic indeed fails when [condition]. I've updated the boundary check and added a regression test.
+>
+> a1b2c3d
+>
+> Verified with `npm test`.
 
 ## Handling Feedback
 - **NEVER** use performative agreement like "You're absolutely right!" or "Great point!".
