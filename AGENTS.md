@@ -37,7 +37,7 @@ The following is a high-level map of available skill categories. **Always check 
 - `writing-plans`, `brainstorming`, `autoresearch`, `deep-interview`
 
 ### 🛠 Engineering & Debugging
-- `systematic-debugging`, `autopilot`, `test-driven-development`, `finishing-a-development-branch`
+- `systematic-debugging`, `autopilot`, `test-driven-development`, `finishing-a-development-branch`, `create-gh-issue`
 
 ### 🛡 Quality & Workflow
 - `requesting-code-review`, `receiving-code-review`, `verification-before-completion`
