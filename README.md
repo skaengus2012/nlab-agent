@@ -4,7 +4,7 @@ A collection of AI agent skills and instructions for Antigravity, Cursor, and mo
 
 ## Project Structure
 - `skills/`: Platform-agnostic AI skill definitions (Markdown).
-- `agents/`: Platform-specific setup scripts and configurations.
+- `platforms/`: Platform-specific setup scripts and configurations.
   - `antigravity/`: Antigravity-specific setup.
 
 ## Installation
@@ -12,7 +12,7 @@ A collection of AI agent skills and instructions for Antigravity, Cursor, and mo
 ### For Antigravity
 To link these skills to your Antigravity environment, run:
 ```bash
-./agents/antigravity/setup.sh
+./platforms/antigravity/setup.sh
 ```
 
 ## Adding New Skills
