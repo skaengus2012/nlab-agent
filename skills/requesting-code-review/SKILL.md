@@ -28,3 +28,9 @@ Dispatch a code-reviewer subagent to catch issues before they cascade. The revie
    - Fix **Critical** issues immediately.
    - Fix **Important** issues before proceeding.
    - Note **Minor** issues for later or fix if trivial.
+
+## Reviewer Guidelines (When you are the Reviewer)
+When tasked with performing a code review, the agent must adhere to the following standards:
+1. **Line-Level Feedback**: Always attach comments to specific code lines using `gh api` or equivalent line-targeting tools. Do not group multiple separate issues into a single general PR comment.
+2. **Technical Focus**: Prioritize logic correctness, edge cases, and performance. Avoid generic praise or "fluff."
+3. **Accuracy**: Use `view_file` to confirm exact line numbers before posting comments to ensure the feedback is correctly anchored.
