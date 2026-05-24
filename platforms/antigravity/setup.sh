@@ -11,7 +11,8 @@ SKILLS_SRC="$REPO_ROOT/skills"
 AGENTS_MD="$REPO_ROOT/AGENTS.md"
 
 # Antigravity Global Path
-ANTIGRAVITY_SKILLS_DIR="$HOME/.gemini/antigravity/skills"
+ANTIGRAVITY_PLUGIN_DIR="$HOME/.gemini/config/plugins/nlab-agent"
+ANTIGRAVITY_SKILLS_DIR="$ANTIGRAVITY_PLUGIN_DIR/skills"
 
 show_help() {
     echo "Usage: ./setup.sh [OPTION] [PROJECT_PATH]"
@@ -26,6 +27,26 @@ show_help() {
 link_global_skills() {
     echo "Step 1: Linking skills globally to Antigravity..."
     mkdir -p "$ANTIGRAVITY_SKILLS_DIR"
+    
+    # Create plugin.json if it doesn't exist
+    if [ ! -f "$ANTIGRAVITY_PLUGIN_DIR/plugin.json" ]; then
+        echo "Creating plugin.json..."
+        cat << 'EOF' > "$ANTIGRAVITY_PLUGIN_DIR/plugin.json"
+{
+  "name": "nlab-agent",
+  "version": "1.0.0",
+  "description": "NLab Agent Skills",
+  "author": {
+    "name": "NLab"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "nlab",
+    "skills"
+  ]
+}
+EOF
+    fi
     
     for skill_dir in "$SKILLS_SRC"/*; do
         if [ -d "$skill_dir" ]; then
