@@ -1,61 +1,49 @@
 #!/bin/bash
-
 # nlab-agent Setup Script for Antigravity
-# This script links skills globally and instructions locally to a project.
+# This script orchestrates linking skills globally and instructions locally.
 
 set -e
 
 # Repository Paths
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-SKILLS_SRC="$REPO_ROOT/skills"
+PLATFORM_DIR="$REPO_ROOT/platforms/antigravity"
 AGENTS_MD="$REPO_ROOT/AGENTS.md"
 
 # Antigravity Global Path
-ANTIGRAVITY_PLUGIN_DIR="$HOME/.gemini/config/plugins/nlab-agent"
-ANTIGRAVITY_SKILLS_DIR="$ANTIGRAVITY_PLUGIN_DIR/skills"
+CONFIG_JSON="$HOME/.gemini/config/config.json"
+PERMISSIONS_MD="$REPO_ROOT/PERMISSIONS.md"
 
 show_help() {
     echo "Usage: ./setup.sh [OPTION] [PROJECT_PATH]"
     echo ""
     echo "Options:"
-    echo "  --global        Link skills globally to Antigravity (System-wide)"
+    echo "  --global        Link skills globally to Antigravity and configure permissions"
     echo "  --project       Link AGENTS.md as CLAUDE.md to a project (Project-wide)"
     echo "  --all           Perform both global and project setup (Default)"
     echo "  --help          Show this help message"
 }
 
 link_global_skills() {
-    echo "Step 1: Linking skills globally to Antigravity..."
-    mkdir -p "$ANTIGRAVITY_SKILLS_DIR"
-    
-    # Create plugin.json if it doesn't exist
-    if [ ! -f "$ANTIGRAVITY_PLUGIN_DIR/plugin.json" ]; then
-        echo "Creating plugin.json..."
-        cat << 'EOF' > "$ANTIGRAVITY_PLUGIN_DIR/plugin.json"
-{
-  "name": "nlab-agent",
-  "version": "1.0.0",
-  "description": "NLab Agent Skills",
-  "author": {
-    "name": "NLab"
-  },
-  "license": "Apache-2.0",
-  "keywords": [
-    "nlab",
-    "skills"
-  ]
-}
-EOF
+    # 1. Run skill symlink script
+    if [ -f "$PLATFORM_DIR/link_skills.sh" ]; then
+        bash "$PLATFORM_DIR/link_skills.sh"
+    else
+        echo "❌ Error: link_skills.sh not found at $PLATFORM_DIR"
+        exit 1
     fi
-    
-    for skill_dir in "$SKILLS_SRC"/*; do
-        if [ -d "$skill_dir" ]; then
-            skill_name=$(basename "$skill_dir")
-            echo "Linking skill: $skill_name"
-            ln -sf "$skill_dir" "$ANTIGRAVITY_SKILLS_DIR/"
+
+    # 2. Run permission configuration script
+    echo "Step 1.1: Configuring global permissions from PERMISSIONS.md..."
+    if command -v python3 >/dev/null 2>&1; then
+        if [ -f "$PLATFORM_DIR/configure_permissions.py" ]; then
+            python3 "$PLATFORM_DIR/configure_permissions.py" "$CONFIG_JSON" "$PERMISSIONS_MD"
+        else
+            echo "❌ Error: configure_permissions.py not found at $PLATFORM_DIR"
+            exit 1
         fi
-    done
-    echo "✅ Global skills linked successfully."
+    else
+        echo "⚠️ Warning: python3 not found. Skipping global permission configuration."
+    fi
 }
 
 link_project_instructions() {
