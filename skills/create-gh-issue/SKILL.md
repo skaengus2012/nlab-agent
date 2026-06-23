@@ -1,6 +1,6 @@
 ---
 name: create-gh-issue
-description: Use when you need to create a new GitHub issue using the `gh` CLI. Ensures issues are created with proper formatting, labels, and context.
+description: Use when you need to create a new GitHub issue using the `gh` CLI. Make sure to use this skill whenever the user mentions creating issues, filing bugs, task tracking, feature proposals, or opening a ticket, even if they do not explicitly ask for 'create-gh-issue'.
 ---
 
 # Create GitHub Issue
@@ -15,17 +15,25 @@ This skill ensures that all GitHub issues created within this repository follow 
 - **Documentation**: When documentation gaps are identified.
 
 ## Core Instructions
-1. **Title**: Use a clear, concise title. Prefix with a category in brackets, e.g., `[Bug]`, `[Feature]`, `[Task]`, `[Docs]`.
-2. **Body**: 
+1. **Single Query Rule**: Ask for exactly **one** pending field at a time. Do not ask for the title, problem, and needs all at once.
+2. **Sequential Progress Tracking**: Keep track of the current collection state in your inner monologue (e.g., `[Title: Done], [Problem: Pending], [Needs: Pending], [Labels: Pending]`) and query only the first pending item.
+3. **Smart Skip**: If the user proactively provides answers for multiple fields in a single message (e.g., giving both Title and Problem together), mark all corresponding fields as completed and proceed straight to the next pending field.
+4. **Focused Prompting**: Keep the query concise and focused on the target field without mentioning future steps.
+5. **Step-by-Step Question Flow**:
+   * Step 1: Suggest or ask for the **Issue Title**. Prefix with a category in brackets, e.g., `[Bug]`, `[Feature]`, `[Task]`, `[Docs]`.
+   * Step 2: Ask for the **Problem** statement (background/context).
+   * Step 3: Ask for the **Needs** (requirements/expected outcome).
+   * Step 4: Ask for and verify the **Labels**.
+6. **Body Structure**: 
    - Use Markdown for formatting.
    - **Problem**: Clearly define the issue or the current gap.
    - **Needs**: List what is required to solve the problem or the desired outcome.
-   - Include relevant files or code snippets if necessary.
    - **Formatting**: Do NOT use `\n` literal strings in the command. Instead, use a multi-line string or save the body to a temporary file and use the `--body-file` flag for reliable formatting.
-3. **Labels**: Always assign at least one relevant label. **Verify that the label exists** in the repository using `gh label list` before running the create command.
-4. **Project/Milestone**: (Optional) Assign to a project or milestone if applicable.
+7. **Labels**: Always assign at least one relevant label. **Verify that the label exists** in the repository using `gh label list` before running the create command.
+8. **Project/Milestone**: (Optional) Assign to a project or milestone if applicable.
 
 ## Red Flags
+- Bombarding the user with multiple questions like "Please tell me the title, problem, and requirements" in a single turn.
 - Creating issues with vague titles like "Fix bug".
 - Forgetting to add labels or using non-existent labels.
 - Using literal `\n` in the body string, which leads to unreadable issues.
