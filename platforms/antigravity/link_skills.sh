@@ -32,6 +32,15 @@ if [ ! -f "$ANTIGRAVITY_PLUGIN_DIR/plugin.json" ]; then
 EOF
 fi
 
+# Clean up broken or stale symlinks in ANTIGRAVITY_SKILLS_DIR
+echo "Cleaning up broken or stale symlinks..."
+for link in "$ANTIGRAVITY_SKILLS_DIR"/*; do
+    if [ -L "$link" ] && [ ! -e "$link" ]; then
+        echo "Removing obsolete skill link: $(basename "$link")"
+        rm -f "$link"
+    fi
+done
+
 for skill_dir in "$SKILLS_SRC"/*; do
     if [ -d "$skill_dir" ]; then
         skill_name=$(basename "$skill_dir")
