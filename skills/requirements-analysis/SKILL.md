@@ -10,14 +10,36 @@ Requirements are commonly tracked as GitHub issues. Issue bodies are often thin 
 
 **Input**: an issue number (e.g. `869`). If the user did not provide one, ask for it.
 
-**Output**: `docs/spec/issue<number>/requirements.md` by default. If the project's `AGENTS.md` or contribution guidelines define a different location, follow that instead.
+**Output**: the document location defined by the project rules (see Step 0), saved as a single file per issue.
 
-**Language**: Write the document (including headings) in the language the user or project rules require. If none is specified, use the language of the issue. Code blocks, file paths, and commands stay in English. The template below uses English headings; translate them as needed.
+**Language**: Write the document (including headings) in the language the project rules or the user require. Code blocks, file paths, and commands stay in English. The template below uses English headings; translate them as needed.
 
 ## When to Use
 - The user gives an issue number and asks to analyze or organize its requirements.
 - Before implementation, when the issue body alone is not enough to start.
 - After new comments change the agreed requirements of an existing document.
+
+## Step 0. Resolve Project Rules
+Before collecting sources, find out how this project wants requirements documents written.
+
+1. Look in the project's `AGENTS.md` (or `CLAUDE.md`) for a requirements-analysis section, or for an index entry linking a related guideline file. Read it.
+2. Extract these settings:
+   - **Output path** (e.g. `docs/spec/issue<number>/requirements.md`)
+   - **Document language**
+   - **Where to look when checking impact** (e.g. a module structure section)
+   - **Template additions or omissions**, if any
+3. Priority: the user's direct instruction > project rules > the settings the user gives in step 4.
+
+### If no project rule is found
+Do not guess. Ask the user, one question at a time, for the settings above (path and language are mandatory; propose `docs/spec/issue<number>/requirements.md` and the issue's language as defaults they can accept).
+
+### Propose making the rule discoverable
+After receiving the settings, propose to record them in the project so that AI agents find them next time. Do not edit any file until the user approves.
+
+- If the project already has a guidelines index (e.g. a table in `AGENTS.md` pointing to `docs/guidelines/*.md`), propose a new guideline file plus an index entry that says when to read it (e.g. "before writing a requirements analysis document").
+- Otherwise, propose a short `## Requirements Analysis` section in `AGENTS.md` listing the settings.
+
+Show the exact change you would make and apply it only after approval. Continue the analysis either way.
 
 ## Step 1. Collect Sources
 Use the repository of the current working directory.
@@ -54,7 +76,7 @@ Separate what the sources **state** from what you **infer**.
 If critical ambiguities remain, ask the user before writing the document.
 
 ## Step 3. Write the Document
-Create the document at the output path (create the directory if it does not exist).
+Create the document at the output path resolved in Step 0 (create the directory if it does not exist).
 
 ### If the document already exists
 The document always represents the **current state** of the requirements. Never append a new section after a `---` separator; edit in place.
