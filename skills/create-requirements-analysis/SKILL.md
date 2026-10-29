@@ -1,6 +1,6 @@
 ---
-name: requirements-analysis
-description: Use when you need to turn a GitHub issue into a requirements analysis document. Takes an issue number, reads the issue body, comments, and parent issue via `gh`, and generates a requirements analysis document inside the project. Make sure to use this skill whenever the user asks to analyze requirements, organize an issue, or write a requirements document for an issue number, even if they do not explicitly ask for 'requirements-analysis'.
+name: create-requirements-analysis
+description: Use when you need to turn a GitHub issue into a requirements analysis document. Takes an issue number, reads the issue body, comments, and parent issue via `gh`, and generates a requirements analysis document inside the project. Make sure to use this skill whenever the user asks to analyze requirements, organize an issue, or write a requirements document for an issue number, even if they do not explicitly ask for 'create-requirements-analysis'.
 ---
 
 # Requirements Analysis

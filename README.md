@@ -60,7 +60,7 @@ Links skills globally (`~/.codex/skills/`) and creates `CODEX.md` in the target 
 
 | Category | Skills | Description |
 | :--- | :--- | :--- |
-| **📝 PM & Planning** | `writing-plans`, `brainstorming`, `create-gh-issue`, `requirements-analysis` | Task planning, architecture exploration, issue creation, and requirements analysis from issues. |
+| **📝 PM & Planning** | `writing-plans`, `brainstorming`, `create-gh-issue`, `create-requirements-analysis` | Task planning, architecture exploration, issue creation, and requirements analysis from issues. |
 | **🛠 Engineering & Debugging** | `systematic-debugging`, `test-driven-development` | Hypothesis-driven root-cause debugging and TDD cycles. |
 | **🛡 Quality & Workflow** | `requesting-code-review`, `receiving-code-review`, `verification-before-completion` | Evidence-based code reviews and pre-completion verification. |
 | **🧠 Knowledge & Meta** | `writing-skills`, `skillify` | Creating, updating, and extracting reusable skills. |
