@@ -1,22 +1,22 @@
 ---
 name: create-requirements-analysis
-description: Use when you need to turn a GitHub issue into a requirements analysis document. Takes an issue number, reads the issue body, comments, and parent issue via `gh`, and generates a requirements analysis document inside the project. Make sure to use this skill whenever the user asks to analyze requirements, organize an issue, or write a requirements document for an issue number, even if they do not explicitly ask for 'create-requirements-analysis'.
+description: Use when you need to turn a tracked requirement (GitHub issue, Jira ticket, etc.) into a requirements analysis document. Takes an issue/ticket ID, reads its body, comments, and parent item from the project's requirements source, and generates a requirements analysis document inside the project. Make sure to use this skill whenever the user asks to analyze requirements, organize an issue, or write a requirements document for an issue/ticket ID, even if they do not explicitly ask for 'create-requirements-analysis'.
 ---
 
 # Requirements Analysis
 
 ## Overview
-Requirements are commonly tracked as GitHub issues. Issue bodies are often thin or empty, and agreed details may live only in comments. This skill collects every source of requirements for one issue and organizes them into a single document inside the repository.
+Requirements are commonly tracked in an issue tracker (GitHub issues, Jira, etc.). Item bodies are often thin or empty, and agreed details may live only in comments. This skill collects every source of requirements for one item and organizes them into a single document inside the repository.
 
-**Input**: an issue number (e.g. `869`). If the user did not provide one, ask for it.
+**Input**: an issue/ticket ID (e.g. `869`, `PROJ-123`). If the user did not provide one, ask for it.
 
-**Output**: the document location defined by the project rules (see Step 0), saved as a single file per issue.
+**Output**: the document location defined by the project rules (see Step 0), saved as a single file per item.
 
 **Language**: Write the document (including headings) in the language the project rules or the user require. Code blocks, file paths, and commands stay in English. The template below uses English headings; translate them as needed.
 
 ## When to Use
-- The user gives an issue number and asks to analyze or organize its requirements.
-- Before implementation, when the issue body alone is not enough to start.
+- The user gives an issue/ticket ID and asks to analyze or organize its requirements.
+- Before implementation, when the item body alone is not enough to start.
 - After new comments change the agreed requirements of an existing document.
 
 ## Step 0. Resolve Project Rules
@@ -24,6 +24,7 @@ Before collecting sources, find out how this project wants requirements document
 
 1. Look in the project's `AGENTS.md` (or `CLAUDE.md`) for a requirements-analysis section, or for an index entry linking a related guideline file. Read it.
 2. Extract these settings:
+   - **Requirements source**: where requirements live and how to read them (e.g. GitHub issues via `gh`, Jira via a CLI or MCP tool, a docs folder)
    - **Output path** (e.g. `docs/spec/issue<number>/requirements.md`)
    - **Document language**
    - **Where to look when checking impact** (e.g. a module structure section)
@@ -31,10 +32,10 @@ Before collecting sources, find out how this project wants requirements document
 3. Priority: the user's direct instruction > project rules > the settings the user gives in step 4.
 
 ### If no project rule is found
-Do not guess. Ask the user, one question at a time, for the settings above (path and language are mandatory; propose `docs/spec/issue<number>/requirements.md` and the issue's language as defaults they can accept).
+Do not guess. Ask the user, one question at a time, for the settings above. The requirements source, output path, and language are mandatory. Propose defaults they can accept: the tracker detected from `git remote` (GitHub) for the source, `docs/spec/issue<number>/requirements.md` for the path, and the item's language for the document.
 
 ### Propose making the rule discoverable
-After receiving the settings, propose to record them in the project so that AI agents find them next time. Do not edit any file until the user approves.
+This applies to every setting, including the requirements source. After receiving the settings, recommend recording them in the project rules so that AI agents find them next time. Do not edit any file until the user approves.
 
 - If the project already has a guidelines index (e.g. a table in `AGENTS.md` pointing to `docs/guidelines/*.md`), propose a new guideline file plus an index entry that says when to read it (e.g. "before writing a requirements analysis document").
 - Otherwise, propose a short `## Requirements Analysis` section in `AGENTS.md` listing the settings.
@@ -42,6 +43,9 @@ After receiving the settings, propose to record them in the project so that AI a
 Show the exact change you would make and apply it only after approval. Continue the analysis either way.
 
 ## Step 1. Collect Sources
+Read the item's body, comments, labels, last-updated time, and parent item (parent issue, epic, etc.) from the requirements source resolved in Step 0, using the tool the project rules name. If the project rules do not name a tool and none is available, ask the user to paste the content; do not fabricate it.
+
+### GitHub issues (example)
 Use the repository of the current working directory.
 
 ```bash
@@ -52,15 +56,13 @@ gh issue view <number> --comments
 gh issue view <number> --json number,title,body,labels,state,comments,url,updatedAt
 ```
 
-### Parent issue
-Read the parent issue (`parent:` field) when **any** of the following holds:
+### Parent item
+Read the parent item (e.g. the `parent:` field of a GitHub issue, a Jira epic) when **any** of the following holds:
 - The body is empty or too thin to derive requirements.
 - The body references the parent for background, goals, or scope.
 - Terms or decisions in the issue are not explained anywhere else.
 
-```bash
-gh issue view <parent-number> --comments
-```
+For GitHub: `gh issue view <parent-number> --comments`.
 
 Do not follow the parent chain further than one level unless the user asks.
 
@@ -92,10 +94,10 @@ The document always represents the **current state** of the requirements. Never 
 
 ### Template
 ```markdown
-# Requirements Analysis: <issue title> (#<number>)
+# Requirements Analysis: <title> (<ID>)
 
-- Issue: <URL>
-- Parent issue: #<parent> (or "None")
+- Source: <URL>
+- Parent item: <ID> (or "None")
 - Labels: <labels>
 - Created: <YYYY-MM-DD>
 - Last Updated: <YYYY-MM-DD>
