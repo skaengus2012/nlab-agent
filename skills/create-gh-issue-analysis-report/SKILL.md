@@ -12,7 +12,12 @@ Requirements are commonly tracked as GitHub issues. Issue bodies are often thin 
 
 **Output**: `docs/spec/issue<number>/requirements.md` (one file per issue; create the directory if it does not exist).
 
-**Language**: Write the document (including headings) in the language the user asks for; if they did not say, ask once. Code blocks, file paths, and commands stay in English. The template below uses English headings; translate them as needed.
+**Language**: Write the document (including headings) in this order of priority:
+1. The language the user asks for.
+2. The language of the existing report, when updating one.
+3. The language of the issue body.
+
+Do not ask the user about the language. Code blocks, file paths, and commands stay in English. The template below uses English headings; translate them as needed.
 
 ## When to Use
 - The user gives a GitHub issue and asks to analyze or organize its requirements.
