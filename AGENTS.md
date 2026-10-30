@@ -3,7 +3,7 @@
 This repository defines the core capabilities, operating protocols, and state-management rules for AI agents working on Android development and Product Management.
 
 <operating_principles>
-- **Plan before action**: Every complex task must begin with a structured plan (`writing-plans`).
+- **Plan before action**: Every complex task must begin with a structured plan (`create-plans`).
 - **Evidence over assumptions**: Never claim completion without running verification (`verification-before-completion`).
 - **Context preservation**: Keep the decision-making history intact using project memory.
 - **Role-switching**: Seamlessly transition between PM (Strategic) and Developer (Tactical) perspectives.
@@ -13,7 +13,7 @@ This repository defines the core capabilities, operating protocols, and state-ma
 <working_agreements>
 - All implementation work must follow the TDD cycle when applicable.
 - Code reviews must be rigorous and evidence-driven.
-- Resolve ambiguity and align on specifications before starting high-effort tasks using `writing-plans` and `brainstorming`.
+- Resolve ambiguity and align on specifications before starting high-effort tasks using `create-plans` and `brainstorming`.
 - **Source of Truth**: The `skills/` directory is the primary source of truth. Always browse it to discover the latest tools.
 </working_agreements>
 
@@ -34,7 +34,7 @@ nlab-agent uses the `.nlab/` directory for persistent state:
 The following is a high-level map of available skill categories. **Always check the `skills/` directory for the full list and latest documentation.**
 
 ### 📝 PM & Planning
-- `writing-plans`, `brainstorming`, `create-gh-issue`
+- `create-plans`, `brainstorming`, `create-gh-issue`
 
 ### 🛠 Engineering & Debugging
 - `systematic-debugging`, `test-driven-development`
