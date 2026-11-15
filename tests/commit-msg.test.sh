@@ -48,7 +48,16 @@ expect_pass "Trailer after body" "Implement #3 - Add hook\n\nbody text\n\nCo-Aut
 expect_pass "Leading comment lines" "# Please enter the commit message\n# Lines starting with # are ignored\nFix #7 - Handle empty case\n"
 expect_pass "Leading blank lines" "\n\nChore #8 - Tidy up\n"
 
+expect_pass "Merge pull request" "Merge pull request #25 from skaengus2012/feature/issue24\n"
+expect_pass "Merge remote-tracking branch" "Merge remote-tracking branch 'origin/main'\n"
+expect_pass "Merge tag" "Merge tag 'v1.0'\n"
+expect_pass "amend commit" "amend! Implement #1 - x\n"
+
 # Messages that must be blocked
+expect_block "Merge prefix with arbitrary text" "Merge anything\n"
+expect_block "Revert prefix with arbitrary text" "Revert nothing\n"
+expect_block "Hash-prefixed subject before a valid line" "#bad subject\n\nFix #1 - x\n"
+expect_block "Overlong subject" "Fix #1 - $(printf 'a%.0s' {1..600})\n"
 expect_block "Missing issue and description" "Fix N/A\n"
 expect_block "Issue number without #" "Fix 12 - x\n"
 expect_block "Lowercase category" "implement #1 - x\n"

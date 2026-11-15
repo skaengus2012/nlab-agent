@@ -4,7 +4,7 @@ This repository follows a specific set of rules for development and maintenance.
 
 ## Commit Message Convention
 
-All commit messages follow this format, and the `commit-msg` hook rejects other subjects:
+All commit messages follow this format. The `commit-msg` hook rejects other subjects once a setup script has enabled it (see Commit Message Hook), and the format applies whether or not the hook is enabled:
 
 `Implement/Fix/Chore IssueNumber - Description`
 
@@ -23,14 +23,14 @@ All commit messages follow this format, and the `commit-msg` hook rejects other 
 `Chore N/A - Update README documentation`
 
 ## Commit Message Hook
-The format above is enforced by `.githooks/commit-msg`. Subjects that start with `Merge `, `Revert `, `fixup!`, or `squash!` are exempt, and `#` comment lines and leading blank lines are ignored when finding the subject.
+The format above is enforced by `.githooks/commit-msg`. Subjects that git generates are exempt: `Merge branch `, `Merge pull request `, `Merge remote-tracking branch `, `Merge tag `, `Merge commit `, `Revert "`, `Reapply "`, `fixup! `, `squash! `, and `amend! `. Other text that merely starts with `Merge ` or `Revert ` is not exempt. Git's own comment lines (`#` alone or `# ` followed by text) and leading blank lines are ignored when finding the subject, so a subject that starts with `#` directly followed by text is checked like any other. Subjects longer than 500 characters are rejected.
 
-When you change the hook, run `bash tests/commit-msg.test.sh` and make sure it exits with 0.
+When you change the hook, run `bash tests/commit-msg.test.sh` and make sure it exits with 0. When you change the setup scripts, run `bash tests/setup-hook.test.sh` as well.
 
 ---
 
 ## AI Agent Instructions
-- **Rule Enforcement**: The `commit-msg` hook enforces the commit message format. Check this file for anything the hook does not cover.
+- **Rule Enforcement**: The `commit-msg` hook enforces the commit message format only where a setup script has enabled it, so follow the format even when it is not enabled. Check this file for anything the hook does not cover.
 - **Local Priority**: These rules are local to the `nlab-agent` repository and take precedence over global defaults.
 
 ## Enforcement Levels

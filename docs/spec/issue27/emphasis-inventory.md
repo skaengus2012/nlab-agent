@@ -72,12 +72,12 @@
 
 | 조정한 표현 | 시나리오 | 대조 | 기준선 | 변경 후 | 해석 |
 |---|---|---|---|---|---|
-| `ONE`, `WHY` (`systematic-debugging`) | `debug-one-change` | 2/3 | 8/8 | 8/8 | 지시문 없이도 대부분 지킴. 강조를 풀어도 위험이 낮음 |
-| `Mandatory` (`receiving-code-review:16`) | `review-reproduce-first` | 3/3 | 3/3 | 3/3 | 지시문 없이도 지킴 |
-| `Mandatory` (`receiving-code-review:23`) | `review-verification` | 3/3 | 3/3 | 3/3 | 지시문 없이도 지킴 |
+| `ONE`, `WHY` (`systematic-debugging`) | `debug-one-change` | 2/3 | 8/8 | 8/8 | 대조에서도 2/3 관측. 대조의 유일한 실패는 "구체적 가설 없음"이라 `ONE` 규칙을 따로 검증한 것은 아님 |
+| `Mandatory` (`receiving-code-review:16`) | `review-reproduce-first` | 3/3 | 3/3 | 3/3 | 대조에서도 3/3 관측 (n=3) |
+| `Mandatory` (`receiving-code-review:23`) | `review-verification` | 3/3 | 3/3 | 3/3 | 대조에서도 3/3 관측 (n=3) |
 | `NEVER`, `INSTEAD` (`receiving-code-review:70,71`) | `review-no-sycophancy` | 0/3 | 3/3 | 3/3 | 지시문이 일을 함. 이유 문장으로 바꿔도 유지됨 |
 | `Do NOT` (`create-gh-issue:31`) | `gh-issue-newline` | 0/3 | 8/8 | 8/8 | 지시문이 일을 함. 이유 문장으로 바꿔도 유지됨 |
-| `Avoid generic praise` (`requesting-code-review:35`) | `review-no-fluff` | 3/3 | 3/3 | 3/3 | 지시문 없이도 지킴 |
+| `Avoid generic praise` (`requesting-code-review:35`) | `review-no-fluff` | 3/3 | 3/3 | 3/3 | 대조에서도 3/3 관측 (n=3) |
 | `Pushy Description` 등 (`writing-skills`) | `skill-description-style` | 3/3 | 0/3 | 3/3 | 의도한 변화. 구 지침은 강한 문체를 유도했고 조정 후 사라짐 |
 
 `FIRST`, `strictly`, `STOP`, 문서 4개의 표현은 평가 대상이 아니다.

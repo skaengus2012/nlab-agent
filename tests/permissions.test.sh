@@ -59,6 +59,7 @@ expected_deny = {
     "Bash(git *core.hooksPath*)",
     "Bash(git commit * -n *)",
     "Bash(git commit * -n)",
+    "Bash(git *hookspath*)",
 }
 missing = expected_deny - set(perms.get("deny", []))
 if missing:

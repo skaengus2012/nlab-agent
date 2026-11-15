@@ -23,7 +23,7 @@ Any skill that requires multiple inputs from the user (e.g., creating issues, wr
 
 ## Progressive Disclosure & Architecture
 To keep the context clean and prevent token bloat, organize skills into a three-level loading hierarchy:
-1. **Metadata (Trigger)**: The YAML frontmatter containing `name` and `description`. Describe when the skill applies, naming the keywords and situations that should trigger it. If the skill undertriggers, measure triggering with a test instead of strengthening the wording.
+1. **Metadata (Trigger)**: The YAML frontmatter containing `name` and `description`. Describe when the skill applies, naming the keywords and situations that should trigger it. If the skill undertriggers, measure triggering instead of strengthening the wording (for example, run the same prompt several times and count how often the skill is invoked). Existing skills keep their stronger trigger phrases until such a measurement exists.
 2. **SKILL.md Body (Core Guidelines)**: Keep the main markdown file under 500 lines. Focus on core workflows, rules, and example blocks.
 3. **Bundled Resources (Details)**: Delegate extensive documentation, huge code templates, or deterministic execution to subdirectories:
    - `references/`: Loaded dynamically as needed (e.g., `aws.md`, `gcp.md`).

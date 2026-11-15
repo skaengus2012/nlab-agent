@@ -23,10 +23,10 @@
   - hook: 입력을 검사해 차단하는 규칙
   - 지시문: 위 수단으로 강제할 수 없는 서술형 규칙. 강조 대신 이유를 적는다.
 - **hook 종류**: 커밋 메시지 형식은 git `commit-msg` hook(`.githooks/commit-msg`)으로 강제한다. 최종 메시지 파일을 직접 검사하므로 명령 문자열 파싱이 필요 없고, 세 플랫폼과 사람의 커밋에 모두 적용된다.
-  - 예외 제목: `Merge `, `Revert `, `fixup!`, `squash!`
-  - 제목 판정: `#`로 시작하는 주석 줄과 선행 빈 줄을 건너뛴 첫 유효 줄
+  - 예외 제목: git이 만드는 형태만 허용한다 (`Merge branch `, `Merge pull request `, `Merge remote-tracking branch `, `Merge tag `, `Merge commit `, `Revert "`, `Reapply "`, `fixup! `, `squash! `, `amend! `). 임의의 `Merge `·`Revert ` 접두어는 예외가 아니다
+  - 제목 판정: git의 주석 줄(`#` 단독 또는 `# `로 시작)과 선행 빈 줄을 건너뛴 첫 유효 줄. `#bad`처럼 `#` 바로 뒤에 글자가 이어지는 줄은 제목으로 검사한다. 제목은 500자를 넘으면 거부한다
   - 활성화: `platforms/*/setup.sh`가 `--help`를 제외한 모든 분기에서 별도 함수로 `git -C "$REPO_ROOT" rev-parse --show-toplevel`의 결과가 `REPO_ROOT`의 실제 경로(`pwd -P`)와 같을 때만 `git -C "$REPO_ROOT" config core.hooksPath .githooks`를 실행하고, 아니면 `skip`을 출력한다. `set -e` 환경에서 git 저장소가 아닌 사본(zip 등)이 중단되지 않게 하고, 상위 디렉터리의 다른 저장소 설정을 바꾸지 않게 하는 가드다. 대상이 이 저장소뿐이므로 임의 프로젝트에는 영향이 없다. hook 파일에는 실행 권한이 필요하다.
-  - 우회 차단: 이 저장소의 `.claude/settings.json` `permissions.deny`에 4개 패턴을 둔다: `Bash(git *--no-verify*)`, `Bash(git commit -n*)`, `Bash(git *core.hooksPath*)`, `Bash(git commit * -n *)` 에 더해, 수동 검증에서 끝에 오는 `-n`이 막히지 않아 `Bash(git commit * -n)`를 추가했다(총 5개). 나머지 우회(결합 플래그 `-anm`, 환경변수 `GIT_CONFIG_COUNT` 등)는 Bash 규칙이 보안 경계가 아니므로 막지 못하며 한계로 `prohibitions.md`에 기록한다. 세 번째 패턴은 `git config --get core.hooksPath` 같은 읽기 명령도 막고, 네 번째는 메시지에 ` -n `이 들어간 `git commit -m "fix -n handling"`을 오탐할 수 있다.
+  - 우회 차단: 이 저장소의 `.claude/settings.json` `permissions.deny`에 4개 패턴을 둔다: `Bash(git *--no-verify*)`, `Bash(git commit -n*)`, `Bash(git *core.hooksPath*)`, `Bash(git commit * -n *)` 에 더해, 수동 검증에서 끝에 오는 `-n`이 막히지 않아 `Bash(git commit * -n)`를 추가했다(5개). 검토에서 git 설정 키가 대소문자를 구분하지 않아 소문자 `core.hookspath`가 통과하는 것을 확인해 `Bash(git *hookspath*)`를 더했다(총 6개). 나머지 우회(결합 플래그 `-anm`, 환경변수 `GIT_CONFIG_COUNT` 등)는 Bash 규칙이 보안 경계가 아니므로 막지 못하며 한계로 `prohibitions.md`에 기록한다. 세 번째 패턴은 `git config --get core.hooksPath` 같은 읽기 명령도 막고, 네 번째는 메시지에 ` -n `이 들어간 `git commit -m "fix -n handling"`을 오탐할 수 있다.
 - **원본과 파생물**: `PERMISSIONS.md`가 원본이다.
   - `PERMISSIONS.md`에 새 블록 `permissions:claude-ask`를 추가한다. 항목은 `git push`, `gh pr merge`, `gh repo create`, `gh repo delete` 4개다. `prompt-required` 블록은 그대로 둔다 (Antigravity 파서는 `auto-allow` 블록만 읽으므로 영향이 없다).
   - `.claude/settings.json`의 `permissions.ask`는 `claude-ask`에서 파생한다 (`Bash(git push *)` 형태, 인자 없는 `git push`는 `Bash(git push)`를 함께 둔다).
@@ -44,7 +44,7 @@
 | 하네스 범위 | 위 검토 범위 | 확정 |
 | "불필요한 강조" 기준 | 대문자·소문자 표현, `Red Flags` 포함, 항목별 판정 | 확정 |
 | 조정 방식 | 강조 제거 + 이유 문장화 | 확정 |
-| 절대 금지 목록 | `commit-msg` hook, deny 5패턴, ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`). `git commit`은 이관하지 않음 | 확정 (사용자 위임, Fable 2라운드 합의) |
+| 절대 금지 목록 | `commit-msg` hook, deny 6패턴, ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`). `git commit`은 이관하지 않음 | 확정 (사용자 위임, Fable 2라운드 합의) |
 | hook 대상 플랫폼 | git hook(공통) + Claude Code deny/ask | 확정 |
 | hook 설정 위치·배포 | `.githooks/`, 저장소 `.claude/settings.json`, setup이 `core.hooksPath`만 설정 | 확정 |
 | hook 불가 항목 | 지시문으로 두고 이유를 적음 | 확정 |
@@ -98,7 +98,7 @@
 12. `skills/*/SKILL.md` 11개의 전수 목록을 `emphasis-inventory.md`에 추가한다. 트리거용 `description`의 유지 여부와 사유도 이 목록에서 판정한다.
     - **Verify**: 작업 7과 같은 방식으로 `skills/`의 grep 결과가 모두 목록에 존재하고, "유지" 줄은 `emphasis-keep.txt`에 추가한다.
 
-13. `.claude/settings.json`에 설계 절의 `permissions.deny` 5패턴을 추가한다.
+13. `.claude/settings.json`에 설계 절의 `permissions.deny` 6패턴을 추가한다.
     - **Verify**: `python3 -c "import json;json.load(open('.claude/settings.json'))"` 가 성공한다. 설계 절의 각 우회 형태를 Claude Code 세션에서 수동으로 시도해 거부 여부를 `prohibitions.md`의 표에 기록하고, 거부되지 않은 형태는 한계로 적는다. 추가로 다음을 확인해 기록한다: `--permission-mode bypassPermissions`에서 `git push --dry-run`이 프롬프트를 띄우는지, `-p --permission-prompts none`에서 거부되는지, `git -C . push --dry-run`이 통과하는지(한계 기록), `git commit -m x -n`과 인자 없는 `git push`가 패턴에 잡히는지(안 잡히면 `Bash(git push)` 같은 인자 없는 형태를 함께 추가). 시도는 스테이징이 빈 상태에서 하고, `core.hooksPath` 시험은 값을 `.githooks`로 주어 부작용이 없게 한다.
 14. 행동 평가 도구를 만든다. 설계 절의 시나리오마다 `docs/spec/issue27/evals/<skill>.md`에 시나리오와 통과 조건(grep 패턴)을 적고, 설계 절의 실행 명령을 고정한 `docs/spec/issue27/evals/run.sh <지시문 디렉터리> <출력 디렉터리>`를 작성한다. `run.sh`는 순차 실행하고 이미 끝난 실행은 건너뛴다.
     - **Verify**: `bash -n docs/spec/issue27/evals/run.sh` 가 성공한다. 전후 사본에 서로 다른 표식 문자열을 넣고 모델이 각각 해당 표식을 답하는지 1회씩 확인해 격리를 입증하고, 시스템 프롬프트 주입과 fixture 로딩 두 방식을 1회씩 비교해 기록한다. 격리 확인의 `total_cost_usd`로 캡을 재산정해 기록한다. 시나리오 수가 상한 8 이하이고 전역 설정 배제 여부가 `evals/README.md`에 기록되어 있다. `run.sh`는 실행마다 fixture를 새로 복사하며, 모델 ID와 CLI 버전(`claude --version`, `--append-system-prompt-file`이 문서화되지 않은 플래그임을 포함)을 `evals/README.md`와 결과 파일에 기록한다. 첫 모델 호출 전에 사용자에게 시작을 알리고 구독 사용 한도 상태를 확인한다.
@@ -136,3 +136,5 @@
 | 2026-11-15 | 작업 10(`PERMISSIONS.md`에 `claude-ask` 블록·`gh pr` 분할, `.claude/settings.json`, `tests/permissions.test.sh`)과 작업 13 완료. 수동 검증에서 끝에 오는 `-n`이 막히지 않아 deny 패턴을 5개로 늘림(테스트 먼저). 결합 플래그 `-anm`은 막지 못함을 확인(한계). 이 시험 중 의도치 않은 커밋이 생겨 `git reset --mixed ce89007`로 되돌림 | 작업 수행 |
 | 2026-11-15 | 작업 11·6·2 완료(문구 조정 20건, 최종 grep 0줄·`emphasis-keep.txt` 빈 파일과 일치). 작업 14 완료(평가 도구, 격리 확인, 판정기 자체 점검), 작업 16 부분 완료(`evals/baseline.md`). 평가 중 `claude` CLI 설치가 깨져 중단: 작업 16 잔여분, 작업 13의 `-p` 수동 검증 4건, 작업 15는 CLI 복구 후 진행. 판정 규칙 3건을 수정(언어 유입, `구현` 오탐, `$'\n'` 누락)하고 규칙을 고정 | 작업 수행 |
 | 2026-11-15 | 작업 16·15 완료: 기준선과 변경 후를 Sonnet 83회·Haiku 91회 실행하고 Sonnet은 `claude-opus-5-5` 블라인드 채점을 최종 판정으로 사용(정규식 불일치 6건을 원문으로 확인해 모두 Opus가 옳음). 회귀 판정 기준에 해당하는 항목은 없으나 판별 시나리오가 2개(계획 최소 3개 미만)라 규칙에 따라 통과가 아니라 보고로 기록. 작업 13의 `-p` 검증 완료(bypassPermissions에서도 ask 유지). 결과는 `evals/baseline.md`, `results.md`, `results-raw.tsv` | 작업 수행 |
+| 2026-11-15 | 구현 후 독립 검토(Fable) 반영: ① hook 강제를 조건부로 서술하고 hook이 꺼진 환경을 위해 형식을 따르라는 지시를 복원(CONTRIBUTING, README, AGENTS) ② `enable_commit_hook`이 기존 `.git/hooks`·전역 hooksPath·hook 파일 없음이면 건너뛰고 경고하도록 변경, `tests/setup-hook.test.sh` 추가(RED 확인 후 구현) ③ 소문자 `core.hookspath` 우회를 확인(실측)하고 deny 패턴 추가 ④ 평가 결론의 수위를 낮추고 한계를 보강 ⑤ 문구 중복·사실 서술 정정 | Fable 독립 검토 |
+| 2026-11-15 | 독립 검토에서 미뤘던 hook 결함 수정(테스트 5건을 먼저 추가해 RED 확인 후 구현, 29건 통과): `#` 접두 제목 우회, `Merge `·`Revert ` 접두어 우회(git이 만드는 형태로 한정), `amend!` 오탐, 제목 500자 상한. 알려진 우회 목록에서 해당 항목 제거 | 사용자 확인, Fable 독립 검토 |

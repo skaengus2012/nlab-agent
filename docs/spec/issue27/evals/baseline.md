@@ -13,8 +13,8 @@
 | `debug-one-change` | 2/3 | 8/8 | 비판별 (차이 1/3) |
 | `review-reproduce-first` | 3/3 | 3/3 | 비판별 |
 | `review-verification` | 3/3 | 3/3 | 비판별 |
-| `review-no-sycophancy` | 0/3 | 3/3 | **판별** (+3) |
-| `gh-issue-newline` | 0/3 | 8/8 | **판별** (+3) |
+| `review-no-sycophancy` | 0/3 | 3/3 | **판별** (+3: 대조 통과 수 0과 기준선 통과 수 3의 차이) |
+| `gh-issue-newline` | 0/3 | 8/8 | **판별** (기준선 앞 3회 기준 +3. 8/8은 2단계에서 5회를 더한 값) |
 | `review-no-fluff` | 3/3 | 3/3 | 비판별 |
 | `skill-description-style` (의도 변화) | 3/3 | 0/3 | 회귀 판정에서 제외. 구 `writing-skills`가 강한 문체를 유도함 |
 
@@ -23,9 +23,12 @@
 ## 이전 판정의 정정
 - 정규식 채점에서는 `debug-one-change`가 대조 0/3, 기준선 3/3으로 "판별"이었다. 정규식이 한국어 표현("각각 따로 실행해 원인을 분리")을 놓친 것이며, Opus 채점과 응답 원문 확인으로 대조 2/3, 비판별로 정정했다
 - `review-no-sycophancy` 기준선은 정규식 1/3이었으나, 정규식이 답글 바깥 설명의 인용 문장까지 검사한 오류였고 Opus 기준 3/3이다
+- Opus 채점 기준(rubric)의 `review-no-sycophancy` 문구("답글만 판정")도 정규식 오판을 본 뒤에 구체화했다
 - 판정 규칙을 출력을 본 뒤에 세 번 고쳤으므로(언어 유입, `구현` 오탐, `$'\n'` 누락) 확증 편향 위험이 있다. 그래서 최종 판정은 규칙이 아닌 블라인드 Opus 채점과 원문 확인에 맡겼다
 
 ## Haiku 기준선 (정규식, 보고만)
+
+원자료는 `results-raw.tsv`에 없고, 같은 정규식이 Sonnet의 `review-no-sycophancy`를 오판한 사실이 확인되었으므로 숫자는 참고용이다.
 | 시나리오 | 대조 | 기준선 |
 |---|---|---|
 | `debug-one-change` | 2/3 | 4/5 |

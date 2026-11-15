@@ -2,7 +2,7 @@
 
 This file defines the global command permission grants allowed in the developer agent environments (such as Antigravity, Claude Code, Cursor, etc.) during the development and automation of the `nlab-agent` repository.
 
-Platform-specific setup scripts parse this file and apply configurations to their respective local settings.
+The Antigravity setup script parses the `auto-allow` block and applies it to its local settings. The `claude-ask` block is mirrored by hand into this repository's `.claude/settings.json` and checked by `tests/permissions.test.sh`.
 
 ---
 
@@ -50,7 +50,7 @@ gh auth status
 
 ## 2. Interactive/Prompt-Required Commands (Ask Every Time)
 
-The following commands involve remote network operations or destructive mutations. They reach remote systems or are hard to undo, so the agent asks for user approval on each execution, even if documented below.
+The following commands reach remote systems or are hard to undo, so the agent asks for user approval on each execution, even if documented below.
 
 ```permissions:prompt-required
 git fetch
@@ -65,7 +65,7 @@ gh pr merge
 
 ### Claude Code enforcement
 
-Claude Code does not read the blocks above. The subset below is derived into `permissions.ask` of this repository's `.claude/settings.json`, and `tests/permissions.test.sh` keeps the two in sync. The remaining commands (`git fetch`, `git pull`, `git clone`, `git remote`) already prompt in Claude Code's default mode, so they are not derived.
+Claude Code does not read the blocks above. The subset below is derived into `permissions.ask` of this repository's `.claude/settings.json`, and `tests/permissions.test.sh` keeps the two in sync. The remaining commands (`git fetch`, `git pull`, `git clone`, `git remote`) already prompt in Claude Code's default mode unless the user has allowed them, so they are not derived.
 
 ```permissions:claude-ask
 git push

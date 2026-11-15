@@ -17,7 +17,7 @@
 | `CONTRIBUTING.md:7` | 커밋 메시지 형식 | hook (`.githooks/commit-msg`) | 4, 8, 9 | 적용 | 적용 (setup이 `core.hooksPath` 설정) | 적용 (같음) |
 | `CONTRIBUTING.md:28` | Git 작업 전 규칙 확인 | hook (`commit-msg`) | 4, 8, 9 | 적용 | 적용 | 적용 |
 | `README.md:11`, `README.md:76` | 커밋 규칙 안내 문구 | hook (`commit-msg`), 문구 정리는 작업 6 | 6 | 적용 | 적용 | 적용 |
-| (우회 차단) | `--no-verify` 계열 | deny 5패턴 | 13 | 적용 | 해당 없음 | 해당 없음 |
+| (우회 차단) | `--no-verify` 계열 | deny 6패턴 | 13 | 적용 | 해당 없음 | 해당 없음 |
 | `PERMISSIONS.md:45`, `PERMISSIONS.md:47` | 원격·파괴 명령은 매번 승인 | ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`) | 10 | 적용 | 현재 `prompt-required` 블록을 반영하지 않음 (기록만) | 변환 없음 |
 
 ## 파생하지 않는 항목과 이유
@@ -29,6 +29,9 @@
 - `Bash(git *core.hooksPath*)`는 `git config --get core.hooksPath` 같은 읽기 명령도 막는다. `Bash(git commit * -n *)`는 메시지에 ` -n `이 들어간 커밋을 오탐할 수 있다.
 - `gh api`와 `git config`는 auto-allow라서 ask를 우회할 수 있다 (예: `gh api -X PUT .../merge`). 별도 이슈 후보다.
 - Antigravity 기존 설치에는 `PERMISSIONS.md` 변경이 소급되지 않는다. 이미 setup을 실행했다면 `gh pr merge`가 자동 허용된 상태로 남고, `gh pr` 분할 뒤에는 `gh pr edit`, `close` 등에 새 프롬프트가 생긴다.
+- git 설정 키는 대소문자를 구분하지 않는다. 소문자 `core.hookspath`가 통과하는 것을 실측하여 `Bash(git *hookspath*)`를 추가했지만 `core.HooksPath` 같은 혼합 표기는 여전히 막지 못한다. 완전하게 막으려면 glob 대신 인자를 파싱하는 PreToolUse hook이 필요하며 별도 이슈 후보다.
+- deny 패턴의 오탐: `Bash(git *--no-verify*)`, `Bash(git *core.hooksPath*)`, `Bash(git *hookspath*)`는 해당 단어가 들어간 `git commit -m "..."`, `git log --grep`, `git grep`도 막는다. README가 안내하는 `git config core.hooksPath .githooks`도 이 저장소의 Claude 에이전트는 실행할 수 없으므로 사용자가 직접 실행해야 한다.
+- hook 자체: 독립 검토에서 확인된 우회 세 가지(`#`로 시작하는 제목, `Merge `·`Revert ` 접두어만 붙인 제목, `amend!` 오탐)와 긴 제목 성능 문제는 수정했다. `git commit -m` 외의 경로(예: `GIT_EDITOR`가 만든 메시지)나 `core.commentChar`를 바꾼 환경에서의 주석 처리는 검증하지 않았다.
 - 로컬 hook과 deny는 모두 우회 가능하다. 우회할 수 없는 강제는 서버 측 CI의 커밋 제목 검사뿐이며 별도 이슈 후보다.
 
 ## 작업 13 수동 검증 결과 (2026-11-15, 이 세션의 Bash 도구에서 수행)

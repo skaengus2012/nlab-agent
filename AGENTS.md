@@ -13,6 +13,7 @@ This repository defines the core capabilities, operating protocols, and state-ma
 <working_agreements>
 - All implementation work must follow the TDD cycle when applicable.
 - Code reviews must be rigorous and evidence-driven.
+- Commit subjects follow the format in `CONTRIBUTING.md`, whether or not the commit hook is enabled.
 - Resolve ambiguity and align on specifications before starting high-effort tasks using `create-plans` and `brainstorming`.
 - **Source of Truth**: The `skills/` directory is the primary source of truth. Always browse it to discover the latest tools.
 </working_agreements>
