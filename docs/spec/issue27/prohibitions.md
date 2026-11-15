@@ -3,7 +3,7 @@
 - 작성일: 2026-11-15
 - 승인: 사용자 위임, Fable 2라운드 토론 합의 (2026-11-15)
 - 원본: `docs/spec/issue27/emphasis-inventory.md`의 "이관" 판정 6행. `git commit`은 이관하지 않기로 결정함
-- 범위 재조정(2026-11-15): 사용자 결정으로 commit-msg hook도 이 PR에서 제외했다(커밋 형식은 지시문으로 지킨다). deny·ask는 저장소 안의 `.claude/settings.json`으로는 nlab-agent 안에서만 적용되어 setup으로 설정을 가져다 쓰는 다른 프로젝트를 보호하지 못해 앞서 제외했다. 따라서 이 문서의 내용(이관 목록, 패턴, 수동 검증, Codex·agy 실측, 한계)은 모두 후속 이슈의 설계 입력이며 이 저장소에는 구현이 없다.
+- 범위 확정(2026-11-15): git hook은 채택하지 않았다(커밋 형식은 nlab-agent 고유 규칙이라 지시문으로 지킨다). 이 저장소는 다른 프로젝트가 setup으로 설정을 가져다 쓰는 원본이므로 저장소 안 `.claude/settings.json`이 아니라 `PERMISSIONS.md`를 각 플랫폼 setup이 사용자 수준 권한 설정으로 적용하는 방식(FR-4)을 쓴다. `deny`는 우회 차단 대상이던 hook이 없어 도입하지 않는다. 아래 "작업 13 수동 검증", "플랫폼별 실제 에이전트 검증"(hook)과 한계의 hook·deny 항목은 hook·deny를 시험했던 기록이며 이 저장소에는 구현이 없다.
 
 ## 분류 기준
 - deny: 특정 도구나 명령을 정적으로 막을 수 있는 규칙 (Claude Code `permissions.deny`)
@@ -15,14 +15,14 @@
 
 | 전수 목록 위치 | 규칙 | 수단 | 구현 작업 | Claude Code | Antigravity | Codex |
 |---|---|---|---|---|---|---|
-| `CONTRIBUTING.md:7` | 커밋 메시지 형식 | hook (`.githooks/commit-msg`) | 4, 8, 9 | 적용 | 적용 (setup이 `core.hooksPath` 설정) | 적용 (같음) |
-| `CONTRIBUTING.md:28` | Git 작업 전 규칙 확인 | hook (`commit-msg`) | 4, 8, 9 | 적용 | 적용 | 적용 |
-| `README.md:11`, `README.md:76` | 커밋 규칙 안내 문구 | hook (`commit-msg`), 문구 정리는 작업 6 | 6 | 적용 | 적용 | 적용 |
-| (우회 차단) | `--no-verify` 계열 | deny 6패턴 (후속 이슈, 이 PR에서 제외) | 13 (취소) | 구현 없음 | 구현 없음 | 구현 없음 |
-| `PERMISSIONS.md:45`, `PERMISSIONS.md:47` | 원격·파괴 명령은 매번 승인 | ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`) (후속 이슈, 이 PR에서 제외) | 10 (취소) | 구현 없음 | 현재 `prompt-required` 블록을 반영하지 않음 (기록만) | 변환 없음 |
+| `CONTRIBUTING.md:7` | 커밋 메시지 형식 | 지시문 (hook 미채택) | 6 | 지시문 | 지시문 | 지시문 |
+| `CONTRIBUTING.md:28` | Git 작업 전 규칙 확인 | 지시문 (원문 유지) | 6 | 지시문 | 지시문 | 지시문 |
+| `README.md:11`, `README.md:76` | 커밋 규칙 안내 문구 | 지시문 (이유 중심으로 정리) | 6 | 지시문 | 지시문 | 지시문 |
+| (우회 차단) | `--no-verify` 계열 | 해당 없음 (hook 미채택으로 대상이 없음) | 13 (취소) | 해당 없음 | 해당 없음 | 해당 없음 |
+| `PERMISSIONS.md:45`, `PERMISSIONS.md:47` | 원격을 바꾸는 명령은 매번 승인 | `prompt-required` 4개 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`)를 setup이 적용 | 17, 18, 19 | `permissions.ask` | 적용하지 않음 (`auto-allow`에 없는 명령은 기본적으로 프롬프트) | `prefix_rule(decision="prompt")` |
 
 ## 파생하지 않는 항목과 이유
-- `git fetch`, `git pull`, `git clone`, `git remote`: 원격 서버를 바꾸지 않고 로컬 참조·설정만 바꾸므로(PR 리뷰 반영) `PERMISSIONS.md`의 `prompt-required`에서도 뺐다.
+- `git fetch`, `git pull`, `git clone`, `git remote`: 원격 서버를 바꾸지 않고 로컬 참조·설정만 바꾸므로(PR 리뷰 반영) `prompt-required`에서 빼고 `auto-allow`로 옮겼다(FR-5).
 - `git commit`: 이 저장소의 일부 skill이 코멘트별 커밋을 지시하고, hook은 사용자의 요청 여부를 판정할 수 없어 이관하지 않는다.
 
 ## 한계
@@ -34,6 +34,7 @@
 - deny 패턴의 오탐: `Bash(git *--no-verify*)`, `Bash(git *core.hooksPath*)`, `Bash(git *hookspath*)`는 해당 단어가 들어간 `git commit -m "..."`, `git log --grep`, `git grep`도 막는다. README가 안내하는 `git config core.hooksPath .githooks`도 이 저장소의 Claude 에이전트는 실행할 수 없으므로 사용자가 직접 실행해야 한다.
 - hook 자체: 독립 검토에서 확인된 우회 세 가지(`#`로 시작하는 제목, `Merge `·`Revert ` 접두어만 붙인 제목, `amend!` 오탐)와 긴 제목 성능 문제는 수정했다. `git commit -m` 외의 경로(예: `GIT_EDITOR`가 만든 메시지)나 `core.commentChar`를 바꾼 환경에서의 주석 처리는 검증하지 않았다.
 - 로컬 hook과 deny는 모두 우회 가능하다. 우회할 수 없는 강제는 서버 측 CI의 커밋 제목 검사뿐이며 별도 이슈 후보다.
+- 권한 배포의 한계(작업 17~19): setup은 Claude Code의 `settings.json`에 항목을 더하기만 하고 지우지 않으므로 `PERMISSIONS.md`에서 뺀 항목이 이미 적용된 환경에는 남는다(Antigravity와 같다). `auto-allow`의 `gh api`와 `git config`는 `ask`를 우회할 수 있다(예: `gh api -X PUT .../merge`). Codex의 `allow`는 "샌드박스 밖에서 프롬프트 없이 실행"이라 Claude Code의 `allow`보다 강하다. `CODEX_HOME`로 규칙 위치가 바뀌는지는 문서에 없고 시험하지 않았다(setup은 `link_skills.sh`와 같은 변수를 쓴다). Claude Code는 `CLAUDE_HOME`(저장소 관례)을 쓰며 `CLAUDE_CONFIG_DIR`는 읽지 않는다.
 
 ## 작업 13 수동 검증 결과 (2026-11-15, 이 세션의 Bash 도구에서 수행)
 
@@ -63,3 +64,14 @@
 
 - 확인한 것: git hook이 두 에이전트의 커밋에도 동작한다. 거부 메시지가 에이전트에게 그대로 전달되었고, 에이전트는 우회하지 않고 지시된 대체 메시지로 다시 시도했다.
 - 확인하지 못한 것: 각 에이전트가 hook을 우회하려 할 때의 동작(이 시험은 우회를 유도하지 않았다), 표본은 플랫폼당 1회다. deny와 ask는 Claude Code 설정이라 두 플랫폼에는 적용되지 않으며 이 시험 대상도 아니다.
+
+## 권한 배포 검증 (작업 21, 2026-11-15)
+
+단위·통합 시험은 `tests/permissions-apply.test.sh`(32건, 임시 홈 디렉터리만 사용). 실제 에이전트로는 다음을 확인했다.
+
+| 대상 | 방법 | 결과 |
+|---|---|---|
+| Claude Code | 실제 `PERMISSIONS.md`로 만든 `settings.json`만 적용되게 `claude -p --setting-sources project --settings <파일> --permission-prompts none`을 임시 저장소에서 실행 | `git status --short`와 `git fetch --dry-run`은 승인 없이 실행됨. `fetch`는 기본 모드에서 프롬프트 대상이므로 새 `allow` 규칙이 적용된 증거다. `git push --dry-run`은 거부됨. 단 이 모드에서는 허용 목록에 없는 명령이 모두 거부되므로 `ask` 규칙 때문인지 구분되지 않는다 |
+| Codex 0.169.0 | 사용자 위치 `~/.codex/rules/`에 무해한 시험 규칙 파일(`echo nlab-probe-token-7f3a`를 `forbidden`)을 잠깐 두고 `codex exec`로 통제 명령(`echo control-token-1`)과 시험 명령을 실행한 뒤 파일과 디렉터리를 지움 | 통제 명령은 실행되고 시험 명령은 "policy forbids commands starting with `echo nlab-probe-token-7f3a`"로 거부됨. 사용자 위치의 규칙이 로드됨을 확인. 시험 전 `~/.codex/rules`는 없었고 시험 후 다시 없음 |
+
+- 확인하지 못한 것: `CODEX_HOME`로 위치를 바꿨을 때의 로드, Claude Code에서 `ask`가 `allow`보다 우선하는 것(문서상 `deny` > `ask` > `allow`)의 실측, 사용자 수준 `~/.claude/settings.json` 경로에서의 로드(같은 스키마를 `--settings`로 시험했고 위치는 문서로 확인).

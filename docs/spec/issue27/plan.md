@@ -11,7 +11,9 @@
 ## 요구사항
 - FR-1: 하네스 전반의 강조 표현을 재평가한다.
 - FR-2: 불필요한 강조 표현은 조정한다.
-- FR-3: 절대 금지 사항은 hook 등으로 강제한다. (이 PR에서는 보류: 후속 이슈로 분리. 변경 이력 2026-11-15 "범위 재조정")
+- FR-3: 절대 금지 사항은 hook 등으로 강제한다. git hook은 채택하지 않고 FR-4로 충족한다(변경 이력 2026-11-15 "범위 재조정", "FR-4·FR-5 추가").
+- FR-4: 각 플랫폼 setup이 `PERMISSIONS.md`의 `auto-allow`·`prompt-required`를 해당 플랫폼의 사용자 수준 권한 설정으로 적용한다 (Claude Code, Codex 추가. Antigravity는 `auto-allow`만 기존에 적용).
+- FR-5: `prompt-required`는 원격을 실제로 바꾸는 4개 명령으로 한정하고 `git fetch`·`pull`·`clone`·`remote`는 `auto-allow`로 옮긴다.
 - 추가 요구(사용자 요청): 지시문 변경 전후의 에이전트 행동을 평가해 회귀가 없음을 확인한다. 이 저장소의 산출물은 에이전트가 읽는 지시문이기 때문이다.
 
 ## 아키텍처/설계
@@ -107,10 +109,25 @@
 16. 변경 전 기준선을 실행한다. 기준 커밋 `ce89007`의 지시문 사본으로 설계 절의 1단계(시나리오당 대조 3 + 기준선 3)와, 판별 시나리오의 기준선 +5를 실행하고 결과를 `docs/spec/issue27/evals/baseline.md`에 기록한다. Haiku 기준선도 같은 파일에 기록한다. 설계 절의 비용·횟수 상한 안에서 실행한다.
     - **Verify**: 기준선 파일에 시나리오별 통과 횟수와 대조 실행 결과, 판별/비판별 표시가 있고, 기준선이 0/n인 시나리오는 수정되어 있다. 무효 실행은 별도 집계되어 있다.
 
+17. `PERMISSIONS.md`를 개정한다. `prompt-required`는 `git push`, `gh repo create`, `gh repo delete`, `gh pr merge` 4개(완료), `auto-allow`에 `git fetch`, `git pull`, `git clone`, `git remote`를 추가하고, 소개 문장을 "각 플랫폼 setup이 이 파일의 블록을 해당 플랫폼의 사용자 수준 설정으로 변환한다"로 쓰고 변환 규칙표(Claude·Codex·Antigravity)와 Codex `allow`의 의미 차이를 적는다.
+    - **Verify**: `awk` 로 두 블록을 읽어 `prompt-required`가 정확히 4개이고 `auto-allow`에 `git fetch`·`git pull`·`git clone`·`git remote`가 각각 1번 있으며, 두 블록에 공통 항목이 없다.
+18. 변환기 `platforms/lib/permissions.py`를 테스트를 먼저 작성해 만든다. 블록 파서는 한 곳에만 둔다(리뷰에서 중복을 지적받은 점을 반영). `claude <settings.json> <PERMISSIONS.md>`는 `permissions.allow`·`permissions.ask`에 항목마다 `Bash(<명령>)`와 `Bash(<명령> *)` 두 형태를 병합한다. `codex <rules파일> <PERMISSIONS.md>`는 전용 규칙 파일을 매번 새로 쓴다(`allow`는 `decision="allow"`, `prompt-required`는 `"prompt"`).
+    - 테스트 `tests/permissions-apply.test.sh`: 파일이 없으면 만든다 / 기존 키·규칙을 보존한다 / 재실행해도 같다(멱등) / 잘못된 JSON은 수정하지 않고 0이 아닌 코드로 종료한다 / `ask` 4개가 두 형태로 들어간다 / Codex 규칙 파일이 `codex execpolicy check`에서 각 명령마다 기대한 결정(`allow`, `prompt`)을 낸다(`codex`가 없으면 이 항목만 건너뜀).
+    - **Verify**: 구현 전에 `bash tests/permissions-apply.test.sh` 가 0이 아닌 종료 코드를 내고, 구현 후 0이다.
+19. `platforms/claude/setup.sh`와 `platforms/codex/setup.sh`의 `--global` 경로(기본 경로 포함)에서 변환기를 호출한다. Claude는 `${CLAUDE_HOME:-$HOME/.claude}/settings.json`, Codex는 `${CODEX_HOME:-$HOME/.codex}/rules/nlab-agent.rules`를 쓴다(`link_skills.sh`와 같은 변수). `python3`가 없거나 변환이 실패하면 경고하고 setup의 나머지는 계속한다. 무엇을 어디에 썼는지 출력한다.
+    - **Verify**: `tests/permissions-apply.test.sh`의 통합 케이스: 홈 디렉터리를 임시 경로로 바꾼 `--global` 실행이 두 플랫폼에서 기대한 파일을 만들고, 실제 `~/.claude`·`~/.codex`는 건드리지 않는다. 기존 `settings.json`이 있으면 다른 키가 그대로다.
+20. `README.md`에 setup이 사용자 수준 설정을 바꾼다는 점(어떤 파일, 병합 방식, 되돌리는 방법, 한계)을 적는다.
+    - **Verify**: `README.md`에 두 경로와 되돌리는 방법이 있다.
+21. 실제 에이전트 검증: ① Claude Code는 변환기가 만든 `settings.json`을 `claude -p --settings <파일>`로 읽혀 `git push --dry-run`이 거부(ask)되고 `git status`가 실행되는지 확인한다. ② Codex는 `~/.codex/rules/`에 무해한 시험용 규칙(`echo` 한 가지 토큰, `forbidden`) 한 파일을 임시로 두고 `codex exec`로 사용자 위치에서 규칙이 로드되는지 확인한 뒤 파일을 바로 지운다(실제 설정을 건드리는 유일한 시험이며 사용자에게 알린다). 결과를 `prohibitions.md`에 갱신한다.
+    - **Verify**: 두 시험의 출력과 시험 파일이 지워졌음(`ls ~/.codex/rules`)이 `prohibitions.md`에 기록되어 있다.
+22. `emphasis-inventory.md`·`prohibitions.md`·PR 본문을 새 범위(FR-4·FR-5)에 맞춰 갱신하고 `Refs #27`을 `Closes #27`로 바꾼다.
+    - **Verify**: 본문에 `hook`·`.claude/settings.json`이 "제외"로만 남아 있고 새 범위가 설명되어 있다.
+
 ## 검증
 - 최종 grep: `diff <(grep -rE "\b(MUST|NEVER|STOP|NOT|ONE|WHY|FIRST|INSTEAD)\b|Mandatory|strict" AGENTS.md README.md CONTRIBUTING.md PERMISSIONS.md skills | sort) <(sort docs/spec/issue27/emphasis-keep.txt)` 가 빈 출력이다.
 - (취소: hook 제외) `bash tests/commit-msg.test.sh` 종료 코드가 0이고 `test -x .githooks/commit-msg` 가 성공한다.
 - `grep -nx "gh pr" PERMISSIONS.md` 결과가 없다 (`auto-allow`가 `gh pr merge`를 덮지 않는다).
+- `bash tests/permissions-apply.test.sh` 종료 코드가 0이다 (작업 18·19).
 - (취소: 설정 파일과 hook 제외) `.claude/settings.json` 유효성, 임시 사본에서 `core.hooksPath` 확인.
 - 행동 평가가 작업 15의 판정 규칙을 통과한다 (`evals/results.md`).
 - `/claude-api prompt-audit` 재실행 결과는 참고용으로만 기록한다.
@@ -145,3 +162,5 @@
 | 2026-11-15 | PR #28 리뷰 반영: `PERMISSIONS.md` 소개 문장을 기준 커밋의 플랫폼 중립 표현("Platform-specific setup scripts parse this file...")으로 복원. 특정 플랫폼 이름을 넣은 것은 이슈 범위 밖 변경이었다 | 리뷰 코멘트 |
 | 2026-11-15 | PR #28 리뷰 반영: `PERMISSIONS.md`의 `prompt-required`를 원격을 실제로 바꾸는 명령(`git push`, `gh repo create`, `gh repo delete`, `gh pr merge`)으로 한정. `git fetch`·`pull`·`clone`·`remote`는 원격 서버를 바꾸지 않아 제외했고, `git commit`은 원래 `auto-allow`에 있다. 어떤 setup도 `prompt-required`를 읽지 않고 `auto-allow`에도 넣지 않았으므로 Antigravity의 실제 동작은 그대로이며, 이 명령들을 프롬프트 없이 허용할지는 별도 결정으로 남김 | 리뷰 코멘트 |
 | 2026-11-15 | PR #28 리뷰 반영: `CONTRIBUTING.md`와 `README.md`의 "because nothing checks ... automatically" 절 제거. 에이전트의 행동을 바꾸지 않고 자동 검사 도구가 생기면 틀린 문장이 되는 현황 서술이라 필수가 아니다. `CONTRIBUTING.md`의 해당 줄은 기준 커밋의 원문("Always check this file before performing any Git operations.")으로 복원 | 리뷰 코멘트 |
+| 2026-11-15 | FR-4·FR-5 추가: 사용자가 이 PR에서 Claude Code·Codex가 `PERMISSIONS.md`를 읽게 하는 구현을 하고, `git fetch`·`pull`·`clone`·`remote`를 `auto-allow`에 추가하고, `gh pr` 분할은 유지하라고 결정. 앞선 "deny·ask 후속 이슈 분리"와 "FR-3 보류"를 번복해 FR-3을 FR-4(setup이 사용자 수준 권한으로 배포)로 충족한다. `deny`는 hook이 없어 우회 차단 대상이 없으므로 도입하지 않는다. 작업 17~22 추가. 사전 조사: Claude Code는 `~/.claude/settings.json`의 `permissions` 리스트를 파일 간에 병합하고 `deny` > `ask` > `allow` 순으로 평가하며 설정 파일은 엄격한 JSON이다. Codex는 `~/.codex/rules/`의 `prefix_rule`(`allow`·`prompt`·`forbidden`, 가장 제한적인 결정이 적용)을 읽고 `allow`는 "샌드박스 밖에서 프롬프트 없이 실행"을 뜻해 Claude의 `allow`보다 강하다. `CODEX_HOME` 지원은 문서에 없다 | 사용자 요청 |
+| 2026-11-15 | 작업 17~22 수행. `platforms/lib/permissions.py`(블록 파서 한 곳, `claude`·`codex` 변환)를 `tests/permissions-apply.test.sh`(32건)를 먼저 작성해 RED 22건 확인 후 구현, 두 setup의 `--global` 경로에 연결(실패해도 skills·지침 설정은 계속). `PERMISSIONS.md`를 개정(소개·변환표, `git fetch`·`pull`·`clone`·`remote`를 `auto-allow`로 이동), `README.md`에 setup이 사용자 수준 설정을 바꾼다는 점과 되돌리는 법을 추가. 실제 검증: Claude Code는 생성된 설정으로 `git fetch`가 승인 없이 실행되고 `git push`가 거부됨(`ask`와 기본 거부는 구분 불가), Codex는 `~/.codex/rules/`의 시험 규칙이 로드되어 `forbidden` 명령이 거부됨(시험 파일은 즉시 삭제). 강조 문구 grep은 `restrictive` 안의 `strict`에 걸려 문장을 바꿈 | 작업 수행 |
