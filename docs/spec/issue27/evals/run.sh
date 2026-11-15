@@ -6,7 +6,7 @@
 #   model       e.g. claude-sonnet-5-5
 #   runs        runs per scenario; finished runs are skipped, so the script can be resumed
 #   out_dir     where results are written (created if missing)
-# Environment: EVAL_CAP_USD (total hard cap, default 25), EVAL_RUN_BUDGET_USD (per run; default 0.50, 0.10 for haiku)
+# Environment: EVAL_CAP_USD (total hard cap, default 25), EVAL_RUN_BUDGET_USD (per run, default 0.50)
 set -u
 
 if [ "$#" -lt 5 ]; then
@@ -18,10 +18,7 @@ only=("$@")
 
 here="$(cd "$(dirname "$0")" && pwd -P)"
 cap="${EVAL_CAP_USD:-25}"
-case "$model" in
-    *haiku*) run_budget="${EVAL_RUN_BUDGET_USD:-0.10}" ;;
-    *)       run_budget="${EVAL_RUN_BUDGET_USD:-0.50}" ;;
-esac
+run_budget="${EVAL_RUN_BUDGET_USD:-0.50}"
 mkdir -p "$out_dir"
 cost_file="$out_dir/cost.total"
 [ -f "$cost_file" ] || echo 0 > "$cost_file"

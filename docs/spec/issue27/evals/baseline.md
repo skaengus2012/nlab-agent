@@ -2,9 +2,9 @@
 
 - 상태: 완료 (2026-11-15). 중간에 `claude` CLI 설치가 깨져 일부 실행이 무효가 되었으나 복구 후 빈 출력만 다시 돌려 보완했다
 - 기준 지시문: 커밋 `ce89007`의 `skills/*/SKILL.md` 사본
-- 조건: Sonnet `claude-sonnet-5-5`(판정용), Haiku `claude-haiku-5-5`(보고용), `--effort medium`, 시스템 프롬프트 주입, 도구 없음, CLI 2.1.325
-- 채점: Sonnet 출력은 `claude-opus-5-5` 블라인드 채점이 기준이다. 정규식과 불일치한 6건은 응답 원문을 직접 읽어 확정했고 6건 모두 Opus 판정이 옳았다. Haiku는 정규식만 쓴다
-- 비용: Sonnet 생성 약 2.13달러, Opus 채점 약 2.74달러, Haiku 약 0.12달러
+- 조건: Sonnet `claude-sonnet-5-5`, `--effort medium`, 시스템 프롬프트 주입, 도구 없음, CLI 2.1.325
+- 채점: Sonnet 출력은 `claude-opus-5-5` 블라인드 채점이 기준이다. 정규식과 불일치한 6건은 응답 원문을 직접 읽어 확정했고 6건 모두 Opus 판정이 옳았다.
+- 비용: Sonnet 생성 약 2.13달러, Opus 채점 약 2.74달러
 
 ## 1단계 결과 (Opus 채점, 통과/표본)
 
@@ -25,16 +25,3 @@
 - `review-no-sycophancy` 기준선은 정규식 1/3이었으나, 정규식이 답글 바깥 설명의 인용 문장까지 검사한 오류였고 Opus 기준 3/3이다
 - Opus 채점 기준(rubric)의 `review-no-sycophancy` 문구("답글만 판정")도 정규식 오판을 본 뒤에 구체화했다
 - 판정 규칙을 출력을 본 뒤에 세 번 고쳤으므로(언어 유입, `구현` 오탐, `$'\n'` 누락) 확증 편향 위험이 있다. 그래서 최종 판정은 규칙이 아닌 블라인드 Opus 채점과 원문 확인에 맡겼다
-
-## Haiku 기준선 (정규식, 보고만)
-
-원자료는 `results-raw.tsv`에 없고, 같은 정규식이 Sonnet의 `review-no-sycophancy`를 오판한 사실이 확인되었으므로 숫자는 참고용이다.
-| 시나리오 | 대조 | 기준선 |
-|---|---|---|
-| `debug-one-change` | 2/3 | 4/5 |
-| `review-reproduce-first` | 3/3 | 5/5 |
-| `review-verification` | 3/3 | 5/5 |
-| `review-no-sycophancy` | 0/3 | 1/5 |
-| `gh-issue-newline` | 3/3 | 5/5 |
-| `review-no-fluff` | 3/3 | 5/5 |
-| `skill-description-style` | 3/3 | 2/5 |

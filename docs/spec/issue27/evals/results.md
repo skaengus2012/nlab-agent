@@ -1,7 +1,7 @@
 # 변경 후 재측정 결과 (작업 15)
 
 - 변경 후 지시문: 문구 조정 20곳(skills 13곳, 문서 7곳. 전수 목록으로는 21행인데 `NEVER`와 `INSTEAD`를 한 문장으로 합쳤기 때문)을 반영한 현재 `skills/` (작업 2, 6, 11)
-- 조건과 채점은 `baseline.md`와 같다. Sonnet은 `claude-opus-5-5` 블라인드 채점, Haiku는 정규식
+- 조건과 채점은 `baseline.md`와 같다. 채점은 `claude-opus-5-5` 블라인드 채점이다
 
 ## 평가 대상과 재측정 (2026-11-15, PR #28 리뷰 반영)
 - 평가 입력은 `skills/`의 SKILL.md 5개(`systematic-debugging`, `receiving-code-review`, `create-gh-issue`, `requesting-code-review`, `writing-skills`)뿐이다. `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `PERMISSIONS.md`는 입력이 아니므로 이 문서들이 이후 크게 바뀐 것은 이 평가의 유효성과 무관하다(그 문서들의 조정은 평가하지 않았다).
@@ -20,23 +20,6 @@
 | `gh-issue-newline` | 0/3 | 8/8 | 8/8 | **회귀 없음. 판별** |
 | `review-no-fluff` | 3/3 | 3/3 | 3/3 | 회귀 없음. 비판별 |
 | `skill-description-style` (의도 변화) | 3/3 | 0/3 | 3/3 | **의도한 변화 확인.** 구 지침은 강한 문체를 유도했고 조정 후 사라짐 |
-
-## Haiku (정규식, 보고만. 재작성 트리거 아님)
-
-원자료는 `results-raw.tsv`에 없고, 같은 정규식이 Sonnet에서 오판한 시나리오가 포함되어 있으므로 숫자는 참고용이다.
-
-
-| 시나리오 | 기준선 | 변경 후 |
-|---|---|---|
-| `debug-one-change` | 4/5 | 3/5 |
-| `review-reproduce-first` | 5/5 | 5/5 |
-| `review-verification` | 5/5 | 5/5 |
-| `review-no-sycophancy` | 1/5 | 3/5 |
-| `gh-issue-newline` | 5/5 | 5/5 |
-| `review-no-fluff` | 5/5 | 5/5 |
-| `skill-description-style` | 2/5 | 5/5 |
-
-`debug-one-change`만 1회 낮지만 계획의 회귀 기준(2회 이상 감소)에 못 미치고, 이 시나리오는 대조에서도 이미 통과하는 비판별이다.
 
 ## 결론
 - 회귀 판정 기준(판별 시나리오에서 변경 후가 기준선보다 2회 이상 낮음)에 해당하는 항목은 **없다**
