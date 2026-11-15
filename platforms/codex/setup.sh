@@ -19,23 +19,13 @@ show_help() {
     echo "  --help          Show this help message"
 }
 
-# Apply the PERMISSIONS.md blocks to Codex's user-level permission settings.
-# A failure here only skips the permissions; skills and instructions are still set up.
-apply_permissions() {
-    local target="${CODEX_HOME:-$HOME/.codex}/rules/nlab-agent.rules"
-    echo "Step 1.1: Applying PERMISSIONS.md to Codex ($target)..."
-    if ! command -v python3 >/dev/null 2>&1; then
-        echo "⚠️ Warning: python3 not found. Skipping permission configuration."
-        return 0
-    fi
-    python3 "$REPO_ROOT/platforms/lib/permissions.py" codex "$target" "$REPO_ROOT/PERMISSIONS.md" \
-        || echo "⚠️ Warning: permissions were not applied (see the message above). Skills and instructions are not affected."
-}
+# shared with the other platforms: apply_permissions <label> <kind> <target-file>
+source "$REPO_ROOT/platforms/lib/apply_permissions.sh"
 
 link_global_skills() {
     if [ -f "$PLATFORM_DIR/link_skills.sh" ]; then
         bash "$PLATFORM_DIR/link_skills.sh"
-        apply_permissions
+        apply_permissions "Codex" codex "${CODEX_HOME:-$HOME/.codex}/rules/nlab-agent.rules"
     else
         echo "❌ Error: link_skills.sh not found at $PLATFORM_DIR"
         exit 1
