@@ -2,7 +2,7 @@
 
 This file defines the global command permission grants allowed in the developer agent environments (such as Antigravity, Claude Code, Cursor, etc.) during the development and automation of the `nlab-agent` repository.
 
-The Antigravity setup script parses the `auto-allow` block and applies it to its local settings. `tests/permissions.test.sh` checks that no `prompt-required` command is covered by an `auto-allow` entry.
+The Antigravity setup script parses the `auto-allow` block and applies it to its local settings.
 
 ---
 

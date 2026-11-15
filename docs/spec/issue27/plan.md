@@ -32,7 +32,7 @@
   - (취소: 같은 이유) `.claude/settings.json`의 `permissions.ask`는 `claude-ask`에서 파생한다 (`Bash(git push *)` 형태, 인자 없는 `git push`는 `Bash(git push)`를 함께 둔다).
   - `git fetch`, `git pull`, `git clone`, `git remote`는 파생하지 않는다. Claude Code 기본 모드에서 이미 프롬프트 대상이고, 빈도가 높고 위험이 낮아 마찰만 커지기 때문이며 이 이유를 `prohibitions.md`에 적는다.
   - `auto-allow`의 `gh pr`는 `gh pr view`, `gh pr list`, `gh pr diff`, `gh pr checks`, `gh pr status`, `gh pr create`, `gh pr comment`로 분할한다. `platforms/claude/setup.sh`는 `PERMISSIONS.md`를 읽지 않으므로 이 충돌은 Antigravity에서만 실제로 일어난다. Antigravity 기존 설치에는 소급되지 않고(`gh pr merge`가 자동 허용된 상태로 남음) `gh pr edit`, `close` 등에 새 프롬프트가 생기는 점을 `prohibitions.md`에 기록한다.
-  - (축소: (3)만 남김) `tests/permissions.test.sh`는 세 가지를 검사한다. (1) `.claude/settings.json`의 ask가 `claude-ask` 블록과 같다 (접두 `Bash(`와 접미 ` *)` 제거 후 집합 비교). (2) `claude-ask` ⊆ `prompt-required`. (3) `prompt-required` 항목이 `auto-allow` 항목을 접두로 갖지 않는다.
+  - (취소: 테스트 파일 제거) `tests/permissions.test.sh`는 세 가지를 검사한다. (1) `.claude/settings.json`의 ask가 `claude-ask` 블록과 같다 (접두 `Bash(`와 접미 ` *)` 제거 후 집합 비교). (2) `claude-ask` ⊆ `prompt-required`. (3) `prompt-required` 항목이 `auto-allow` 항목을 접두로 갖지 않는다.
   - `gh api`, `git config`를 통한 ask 우회는 한계로 기록하고 별도 이슈 후보로 둔다.
 - **적용 범위**: 커밋 형식은 `CONTRIBUTING.md:29`대로 이 저장소 전용 규칙이다. 다른 프로젝트로 배포하지 않으며 임의 프로젝트에 설정을 병합하는 setup 변경도 하지 않는다.
 - **플랫폼**: git hook은 플랫폼 무관이다. deny/ask 설정은 Claude Code 전용이며, Antigravity와 Codex는 항목별 적용 여부를 기록만 한다.
@@ -91,8 +91,8 @@
    - 위 가드 함수는 `platforms/lib/commit_hook.sh`에 한 번만 두고, `platforms/antigravity/setup.sh`, `platforms/claude/setup.sh`, `platforms/codex/setup.sh`가 `source`로 불러 `--help`를 제외한 분기에서 호출한다 (PR 리뷰 반영: 3곳 중복 제거).
    - `README.md`에 hook 안내를 추가하고, `CONTRIBUTING.md`에 "hook 수정 시 `bash tests/commit-msg.test.sh` 실행" 한 줄을 추가한다.
    - **Verify**: `grep -c "^enable_commit_hook()" platforms/lib/commit_hook.sh` 가 1이고 `platforms/*/setup.sh`에는 함수 정의가 없으며 `bash -n`이 통과한다. git 저장소 밖 `mktemp -d` 아래에 작업 트리를 `rsync -a --exclude .git`으로 복사하고 `git init`한 사본(이 worktree의 `.git`은 실제 저장소를 가리키는 파일이므로 복사하지 않는다)에서 `CLAUDE_HOME="$(mktemp -d)" ./platforms/claude/setup.sh --global` 을 실행한 뒤 `test "$(git -C <사본> rev-parse --git-path hooks)" = ".githooks"` 가 성공한다. `.git` 없는 사본(git 저장소 밖 `mktemp -d` 아래에 `rsync -a --exclude .git`)에서도 같은 명령이 종료 코드 0이고 상위 저장소 설정이 바뀌지 않는다. 실제 `~/.claude`, `~/.gemini` 설정과 이 저장소의 `core.hooksPath`는 검증에서 건드리지 않으며, 검증 끝에 이 저장소에서 `git rev-parse --git-path hooks` 가 `.githooks`가 아닌 기존 경로를 반환함을 확인한다 (`git config --get core.hooksPath`는 deny 패턴에 걸리므로 쓰지 않는다). Antigravity와 Codex setup은 실행하지 않는다.
-10. `PERMISSIONS.md`에 `permissions:claude-ask` 블록(4개 항목)을 추가하고 `auto-allow`의 `gh pr`를 설계 절대로 분할한다. (`claude-ask` 블록과 `.claude/settings.json` 파생은 취소.) `prompt-required`가 `auto-allow`에 덮이지 않는지의 검사만 `tests/permissions.test.sh`로 남긴다.
-    - **Verify**: `bash tests/permissions.test.sh; echo $?` 가 0이다.
+10. `PERMISSIONS.md`에 `permissions:claude-ask` 블록(4개 항목)을 추가하고 `auto-allow`의 `gh pr`를 설계 절대로 분할한다. (`claude-ask` 블록과 `.claude/settings.json` 파생은 취소.) (`tests/permissions.test.sh`도 이후 제거, 변경 이력 참조.)
+    - **Verify**: `grep -nx "gh pr" PERMISSIONS.md` 결과가 없다. (2026-11-15 `tests/permissions.test.sh` 제거에 따라 변경)
 11. `skills/writing-skills/SKILL.md`의 작성 지침("No exceptions:" 카운터 추가, "Pushy Description")을 이유 중심 지침으로 조정한다.
     - **Verify**: `grep -nE "No exceptions|Pushy" skills/writing-skills/SKILL.md` 결과가 없다.
 12. `skills/*/SKILL.md` 11개의 전수 목록을 `emphasis-inventory.md`에 추가한다. 트리거용 `description`의 유지 여부와 사유도 이 목록에서 판정한다.
@@ -110,7 +110,7 @@
 ## 검증
 - 최종 grep: `diff <(grep -rE "\b(MUST|NEVER|STOP|NOT|ONE|WHY|FIRST|INSTEAD)\b|Mandatory|strict" AGENTS.md README.md CONTRIBUTING.md PERMISSIONS.md skills | sort) <(sort docs/spec/issue27/emphasis-keep.txt)` 가 빈 출력이다.
 - (취소: hook 제외) `bash tests/commit-msg.test.sh` 종료 코드가 0이고 `test -x .githooks/commit-msg` 가 성공한다.
-- `bash tests/permissions.test.sh` 종료 코드가 0이다 (`prompt-required`가 `auto-allow`에 덮이지 않는지만 검사).
+- `grep -nx "gh pr" PERMISSIONS.md` 결과가 없다 (`auto-allow`가 `gh pr merge`를 덮지 않는다).
 - (취소: 설정 파일과 hook 제외) `.claude/settings.json` 유효성, 임시 사본에서 `core.hooksPath` 확인.
 - 행동 평가가 작업 15의 판정 규칙을 통과한다 (`evals/results.md`).
 - `/claude-api prompt-audit` 재실행 결과는 참고용으로만 기록한다.
@@ -141,3 +141,4 @@
 | 2026-11-15 | PR #28 후속 리뷰 반영: ① CRLF 줄바꿈에서 `#\r` 주석 줄이 제목으로 오인되어 정상 메시지가 거부되는 결함과 octopus merge 기본 메시지(`Merge branches '...'`) 거부를 재현해 확인하고, 테스트 6건을 먼저 추가해 RED 2건 확인 후 hook 수정(35건 통과) ② Codex 0.169.0·agy 1.5.9 실제 커밋 검증을 수행해 `prohibitions.md`에 기록 | 리뷰 코멘트, 사용자 요청 |
 | 2026-11-15 | 범위 조정: 이 저장소가 다른 프로젝트에 설정을 배포하는 원본이라는 점을 확인. 저장소 안 `.claude/settings.json`(`deny` 6패턴, `ask` 8항목)은 nlab-agent 안에서만 적용되어 목적에 맞지 않아 제외하고, `PERMISSIONS.md`의 `claude-ask` 블록과 `tests/permissions.test.sh`의 관련 검사도 제거(`prompt-required` 대 `auto-allow` 검사는 유지). 작업 13 취소, 작업 10 축소. FR-3은 커밋 형식 hook(전 플랫폼)까지만 충족하고 `deny`·`ask`의 사용자 수준 배포는 후속 이슈로 분리. 커밋 형식 hook은 nlab-agent의 `CONTRIBUTING.md` 규칙이라 이 저장소 전용으로 유지 | 사용자 지시 |
 | 2026-11-15 | 범위 재조정: 사용자 결정으로 git hook(`.githooks/commit-msg`, `platforms/lib/commit_hook.sh`, setup의 활성화, `tests/commit-msg.test.sh`, `tests/setup-hook.test.sh`)을 이 PR에서 제외하고 `platforms/*/setup.sh`를 기준 커밋 상태로 복원. 커밋 형식은 기존처럼 에이전트가 지시문(`CONTRIBUTING.md`)을 보고 지킨다. `README.md`·`CONTRIBUTING.md`의 hook 서술과 "Enforcement Levels" 절 제거, `AGENTS.md`에 넣었던 커밋 형식 줄도 제거(`AGENTS.md`는 다른 프로젝트에 `CLAUDE.md`로 연결되는데 그 프로젝트에는 `CONTRIBUTING.md`가 없다). 작업 4·8·9 취소. 이 PR은 FR-1·FR-2와 행동 평가만 충족하고 FR-3(`hook`·`deny`·`ask`로 강제)은 후속 이슈로 분리. 설계와 수동 검증 기록은 `prohibitions.md`에 입력 자료로 남김. `PERMISSIONS.md`의 `gh pr` 분할과 `tests/permissions.test.sh`의 겹침 검사는 유지 | 사용자 지시 |
+| 2026-11-15 | PR #28 리뷰 반영: `tests/permissions.test.sh` 제거. 원래 목적(`.claude/settings.json`과 `PERMISSIONS.md` 일치 검사)이 사라졌고 남은 검사는 한 문서 안의 정합성 점검인데, `prompt-required`는 어떤 setup도 읽지 않고 CI도 없어 아무도 자동으로 실행하지 않는다. `PERMISSIONS.md`의 해당 문장도 제거. `gh pr` 분할은 유지(Antigravity가 `auto-allow`를 실제로 반영하기 때문) | 리뷰 코멘트 |
