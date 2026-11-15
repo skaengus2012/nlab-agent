@@ -52,6 +52,9 @@ expect_pass "Merge pull request" "Merge pull request #25 from skaengus2012/featu
 expect_pass "Merge remote-tracking branch" "Merge remote-tracking branch 'origin/main'\n"
 expect_pass "Merge tag" "Merge tag 'v1.0'\n"
 expect_pass "amend commit" "amend! Implement #1 - x\n"
+expect_pass "Octopus merge commit" "Merge branches 'b1' and 'b2'\n"
+expect_pass "CRLF subject only" "Fix #1 - test\r\n"
+expect_pass "CRLF with comment lines" "#\r\n# comment\r\nFix #1 - test\r\n"
 
 # Messages that must be blocked
 expect_block "Merge prefix with arbitrary text" "Merge anything\n"
@@ -66,6 +69,9 @@ expect_block "Whitespace-only description" "Fix #1 -    \n"
 expect_block "Unknown category" "Update #1 - x\n"
 expect_block "Missing separator" "Fix #1 x\n"
 expect_block "Comment-only message" "# only comments\n"
+expect_block "Merge branches prefix with arbitrary text" "Merge branches anything\n"
+expect_block "CRLF comment-only message" "#\r\n# only comments\r\n"
+expect_block "CRLF invalid subject" "bad message\r\n"
 expect_block "Empty message" ""
 
 # Integration: a real commit in a temporary repository

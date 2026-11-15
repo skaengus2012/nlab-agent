@@ -50,3 +50,15 @@
 | 인자 없는 `git push`가 ask에 잡히는지 | 구분 불가 (위와 같은 이유). `Bash(git push)` 패턴을 함께 두어 대응 |
 
 참고: `git commit -anm` 시험은 `-a`가 추적 파일을 자동 스테이징한다는 점을 놓치고 수행해 의도하지 않은 커밋(`c884f20`)이 만들어졌다. 푸시 전이었고 `git reset --mixed ce89007`로 되돌려 작업 트리는 보존되었다. 이후 시험은 `-a`가 없는 형태만 사용한다.
+
+## 플랫폼별 실제 에이전트 검증 (2026-11-15)
+
+임시 저장소 복사본에서 `platforms/lib/commit_hook.sh`의 `enable_commit_hook`만 실행해 hook을 켠 뒤(실제 `~/.codex`, `~/.gemini` 설정은 건드리지 않음), 각 CLI에 같은 지시를 주었다: `probe.txt`를 만들어 메시지 `bad message`로 커밋하고, 거부되면 `Chore N/A - add probe file`로 다시 커밋.
+
+| 플랫폼 | 버전 | `bad message` 커밋 | `Chore N/A - add probe file` 커밋 | 비고 |
+|---|---|---|---|---|
+| Codex | codex-cli 0.169.0 (`exec`, workspace-write) | hook이 거부, 커밋 없음 | 생성됨 | 기본 샌드박스는 `.git` 쓰기를 막아 `git add`에서 멈췄다(hook과 무관한 샌드박스 오류). `.git` 경로만 쓰기 가능으로 열어 재실행 |
+| Antigravity | agy 1.5.9 (`-p`, 기본 모드) | hook이 거부, 커밋 없음 | 생성됨 | `--mode auto`는 이 계정에서 쓸 수 없어 기본 모드로 실행됨 |
+
+- 확인한 것: git hook이 두 에이전트의 커밋에도 동작한다. 거부 메시지가 에이전트에게 그대로 전달되었고, 에이전트는 우회하지 않고 지시된 대체 메시지로 다시 시도했다.
+- 확인하지 못한 것: 각 에이전트가 hook을 우회하려 할 때의 동작(이 시험은 우회를 유도하지 않았다), 표본은 플랫폼당 1회다. deny와 ask는 Claude Code 설정이라 두 플랫폼에는 적용되지 않으며 이 시험 대상도 아니다.
