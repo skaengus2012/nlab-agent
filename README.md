@@ -8,7 +8,7 @@ Multi-agent orchestration protocols and platform-agnostic AI skills designed for
 - `skills/`: Platform-agnostic AI skill definitions (Markdown with YAML frontmatter).
 - `platforms/`: Platform-specific setup scripts and configurations (`antigravity`, `claude`, `codex`).
 - `PERMISSIONS.md`: Tool execution permissions configuration for agent automation.
-- `CONTRIBUTING.md`: Development guidelines and commit conventions. Follow them for every commit, because nothing checks the format automatically.
+- `CONTRIBUTING.md`: Development guidelines and commit conventions.
 
 ## Supported Platforms & Installation
 

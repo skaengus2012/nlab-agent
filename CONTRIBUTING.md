@@ -25,5 +25,5 @@ All commit messages follow this format:
 ---
 
 ## AI Agent Instructions
-- **Rule Enforcement**: Check this file before performing any Git operations, because nothing checks the commit message format automatically.
+- **Rule Enforcement**: Always check this file before performing any Git operations.
 - **Local Priority**: These rules are local to the `nlab-agent` repository and take precedence over global defaults.
