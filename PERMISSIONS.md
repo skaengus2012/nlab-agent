@@ -42,7 +42,6 @@ git merge
 git reset
 git cherry-pick
 git clean
-git config
 git fetch
 git pull
 git clone
@@ -55,7 +54,6 @@ gh pr status
 gh pr create
 gh pr comment
 gh issue
-gh api
 gh repo view
 gh auth status
 ```
