@@ -11,7 +11,7 @@
 ## 요구사항
 - FR-1: 하네스 전반의 강조 표현을 재평가한다.
 - FR-2: 불필요한 강조 표현은 조정한다.
-- FR-3: 절대 금지 사항은 hook 등으로 강제한다.
+- FR-3: 절대 금지 사항은 hook 등으로 강제한다. (이 PR에서는 보류: 후속 이슈로 분리. 변경 이력 2026-11-15 "범위 재조정")
 - 추가 요구(사용자 요청): 지시문 변경 전후의 에이전트 행동을 평가해 회귀가 없음을 확인한다. 이 저장소의 산출물은 에이전트가 읽는 지시문이기 때문이다.
 
 ## 아키텍처/설계
@@ -74,20 +74,20 @@
    - **Verify**: "조정" 판정 항목의 원문이 더 이상 grep되지 않는다 (`grep -rnF "<원문>" AGENTS.md README.md CONTRIBUTING.md PERMISSIONS.md skills`).
 3. 작업 7과 12의 목록에서 "이관" 판정 항목을 deny/ask/hook으로 분류해 `docs/spec/issue27/prohibitions.md`에 기록한다. 항목별로 Antigravity·Codex 적용 여부 열을 둔다. 분류 기준은 `CONTRIBUTING.md`에 한 단락으로 남긴다. 사용자가 이관 목록과 분류를 승인한다.
    - **Verify**: 목록의 모든 "이관" 판정 항목이 `prohibitions.md`에 있고, 사용자 승인이 변경 이력에 기록되어 있다.
-4. 승인된 hook 항목 중 커밋 메시지 형식을 `.githooks/commit-msg`로 구현하고 실행 권한을 부여한다.
-   - **Verify**: `bash tests/commit-msg.test.sh; echo $?` 가 0이고 `test -x .githooks/commit-msg` 가 성공한다.
+4. ~~승인된 hook 항목 중 커밋 메시지 형식을 `.githooks/commit-msg`로 구현하고 실행 권한을 부여한다.~~ (Dropped: 2026-11-15 사용자 결정으로 git hook 자체를 이 PR에서 제외하고 커밋 형식은 지시문으로 둔다. 변경 이력 참조)
+   - (취소됨) **Verify**: `bash tests/commit-msg.test.sh; echo $?` 가 0이고 `test -x .githooks/commit-msg` 가 성공한다.
 5. ~~작업 5~~ (Dropped: 커밋 형식이 저장소 전용 규칙이라 임의 프로젝트로 배포하지 않기로 함. 번호는 재사용하지 않는다.)
 
 6. `prohibitions.md`에서 이관으로 판정된 항목의 지시문을 이유 중심 문장으로 정리한다. 예상 대상은 커밋 규칙 문구(`README.md:11`, `CONTRIBUTING.md:7,28`)이며, 최종 대상은 작업 3의 판정으로 정한다.
    - **Verify**: 이관 항목의 원문이 더 이상 grep되지 않는다.
 7. 문서 4개(`AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `PERMISSIONS.md`)의 전수 목록 `docs/spec/issue27/emphasis-inventory.md`를 작성한다. 열: 파일, 표현 원문, 판정(유지/조정/이관), 강제 수단, 사유.
    - **Verify**: 검증 절의 패턴 grep이 문서 4개에서 반환하는 `파일:내용` 줄이 모두 목록에 존재한다. "유지" 판정 줄은 `docs/spec/issue27/emphasis-keep.txt`에 `grep -rE`(`-n` 없음) 출력 형식 그대로 둔다.
-8. 커밋 메시지 테스트 `tests/commit-msg.test.sh`를 먼저 작성해 실패를 확인한다.
+8. ~~커밋 메시지 테스트 `tests/commit-msg.test.sh`를 먼저 작성해 실패를 확인한다.~~ (Dropped: 2026-11-15 사용자 결정으로 git hook 자체를 이 PR에서 제외하고 커밋 형식은 지시문으로 둔다. 변경 이력 참조)
    - 통과해야 할 케이스: `Implement #12 - x`, `Chore N/A - x`, `Merge branch x`, `Revert "x"`, `fixup! x`, `squash! x`, `Co-Authored-By` 트레일러가 붙은 메시지, 선행 `#` 주석 줄이나 빈 줄이 있는 메시지
    - 차단해야 할 케이스: `Fix N/A`, `Fix 12 - x`(`#` 없음), `implement #1 - x`(소문자), `Fix #1 - `(빈 설명)
    - 통합 케이스: 임시 저장소에서 `git init`, `core.hooksPath` 설정 후 위반 커밋이 실패한다.
    - **Verify**: hook 구현 전 `bash tests/commit-msg.test.sh` 가 0이 아닌 종료 코드를 낸다.
-9. 활성화를 마무리한다.
+9. ~~활성화를 마무리한다.~~ (Dropped: 2026-11-15 사용자 결정으로 git hook 자체를 이 PR에서 제외하고 커밋 형식은 지시문으로 둔다. 변경 이력 참조)
    - 위 가드 함수는 `platforms/lib/commit_hook.sh`에 한 번만 두고, `platforms/antigravity/setup.sh`, `platforms/claude/setup.sh`, `platforms/codex/setup.sh`가 `source`로 불러 `--help`를 제외한 분기에서 호출한다 (PR 리뷰 반영: 3곳 중복 제거).
    - `README.md`에 hook 안내를 추가하고, `CONTRIBUTING.md`에 "hook 수정 시 `bash tests/commit-msg.test.sh` 실행" 한 줄을 추가한다.
    - **Verify**: `grep -c "^enable_commit_hook()" platforms/lib/commit_hook.sh` 가 1이고 `platforms/*/setup.sh`에는 함수 정의가 없으며 `bash -n`이 통과한다. git 저장소 밖 `mktemp -d` 아래에 작업 트리를 `rsync -a --exclude .git`으로 복사하고 `git init`한 사본(이 worktree의 `.git`은 실제 저장소를 가리키는 파일이므로 복사하지 않는다)에서 `CLAUDE_HOME="$(mktemp -d)" ./platforms/claude/setup.sh --global` 을 실행한 뒤 `test "$(git -C <사본> rev-parse --git-path hooks)" = ".githooks"` 가 성공한다. `.git` 없는 사본(git 저장소 밖 `mktemp -d` 아래에 `rsync -a --exclude .git`)에서도 같은 명령이 종료 코드 0이고 상위 저장소 설정이 바뀌지 않는다. 실제 `~/.claude`, `~/.gemini` 설정과 이 저장소의 `core.hooksPath`는 검증에서 건드리지 않으며, 검증 끝에 이 저장소에서 `git rev-parse --git-path hooks` 가 `.githooks`가 아닌 기존 경로를 반환함을 확인한다 (`git config --get core.hooksPath`는 deny 패턴에 걸리므로 쓰지 않는다). Antigravity와 Codex setup은 실행하지 않는다.
@@ -109,10 +109,9 @@
 
 ## 검증
 - 최종 grep: `diff <(grep -rE "\b(MUST|NEVER|STOP|NOT|ONE|WHY|FIRST|INSTEAD)\b|Mandatory|strict" AGENTS.md README.md CONTRIBUTING.md PERMISSIONS.md skills | sort) <(sort docs/spec/issue27/emphasis-keep.txt)` 가 빈 출력이다.
-- `bash tests/commit-msg.test.sh` 종료 코드가 0이고 `test -x .githooks/commit-msg` 가 성공한다.
-- 작업 10을 수행했다면 `bash tests/permissions.test.sh` 종료 코드가 0이다.
-- `.claude/settings.json`이 유효한 JSON이다.
-- 임시 사본에서 setup 실행 후 `git rev-parse --git-path hooks` 가 `.githooks`를 반환한다.
+- (취소: hook 제외) `bash tests/commit-msg.test.sh` 종료 코드가 0이고 `test -x .githooks/commit-msg` 가 성공한다.
+- `bash tests/permissions.test.sh` 종료 코드가 0이다 (`prompt-required`가 `auto-allow`에 덮이지 않는지만 검사).
+- (취소: 설정 파일과 hook 제외) `.claude/settings.json` 유효성, 임시 사본에서 `core.hooksPath` 확인.
 - 행동 평가가 작업 15의 판정 규칙을 통과한다 (`evals/results.md`).
 - `/claude-api prompt-audit` 재실행 결과는 참고용으로만 기록한다.
 
@@ -141,3 +140,4 @@
 | 2026-11-15 | PR #28 리뷰 반영: `enable_commit_hook` 39줄이 3개 setup.sh에 동일하게 복사돼 있던 것을 `platforms/lib/commit_hook.sh`로 추출(`tests/setup-hook.test.sh` 10건·`tests/commit-msg.test.sh` 29건 전후 동일 통과). 작업 9 서술 갱신 | 리뷰 코멘트 |
 | 2026-11-15 | PR #28 후속 리뷰 반영: ① CRLF 줄바꿈에서 `#\r` 주석 줄이 제목으로 오인되어 정상 메시지가 거부되는 결함과 octopus merge 기본 메시지(`Merge branches '...'`) 거부를 재현해 확인하고, 테스트 6건을 먼저 추가해 RED 2건 확인 후 hook 수정(35건 통과) ② Codex 0.169.0·agy 1.5.9 실제 커밋 검증을 수행해 `prohibitions.md`에 기록 | 리뷰 코멘트, 사용자 요청 |
 | 2026-11-15 | 범위 조정: 이 저장소가 다른 프로젝트에 설정을 배포하는 원본이라는 점을 확인. 저장소 안 `.claude/settings.json`(`deny` 6패턴, `ask` 8항목)은 nlab-agent 안에서만 적용되어 목적에 맞지 않아 제외하고, `PERMISSIONS.md`의 `claude-ask` 블록과 `tests/permissions.test.sh`의 관련 검사도 제거(`prompt-required` 대 `auto-allow` 검사는 유지). 작업 13 취소, 작업 10 축소. FR-3은 커밋 형식 hook(전 플랫폼)까지만 충족하고 `deny`·`ask`의 사용자 수준 배포는 후속 이슈로 분리. 커밋 형식 hook은 nlab-agent의 `CONTRIBUTING.md` 규칙이라 이 저장소 전용으로 유지 | 사용자 지시 |
+| 2026-11-15 | 범위 재조정: 사용자 결정으로 git hook(`.githooks/commit-msg`, `platforms/lib/commit_hook.sh`, setup의 활성화, `tests/commit-msg.test.sh`, `tests/setup-hook.test.sh`)을 이 PR에서 제외하고 `platforms/*/setup.sh`를 기준 커밋 상태로 복원. 커밋 형식은 기존처럼 에이전트가 지시문(`CONTRIBUTING.md`)을 보고 지킨다. `README.md`·`CONTRIBUTING.md`의 hook 서술과 "Enforcement Levels" 절 제거, `AGENTS.md`에 넣었던 커밋 형식 줄도 제거(`AGENTS.md`는 다른 프로젝트에 `CLAUDE.md`로 연결되는데 그 프로젝트에는 `CONTRIBUTING.md`가 없다). 작업 4·8·9 취소. 이 PR은 FR-1·FR-2와 행동 평가만 충족하고 FR-3(`hook`·`deny`·`ask`로 강제)은 후속 이슈로 분리. 설계와 수동 검증 기록은 `prohibitions.md`에 입력 자료로 남김. `PERMISSIONS.md`의 `gh pr` 분할과 `tests/permissions.test.sh`의 겹침 검사는 유지 | 사용자 지시 |

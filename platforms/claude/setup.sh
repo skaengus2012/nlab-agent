@@ -55,9 +55,6 @@ link_project_instructions() {
     echo "✅ Linked AGENTS.md -> $abs_target_dir/CLAUDE.md"
 }
 
-# shared with the other platforms: enable_commit_hook
-source "$REPO_ROOT/platforms/lib/commit_hook.sh"
-
 # Parse Arguments
 case "$1" in
     --global)
@@ -79,8 +76,6 @@ case "$1" in
         link_project_instructions "${1:-.}"
         ;;
 esac
-
-enable_commit_hook
 
 echo ""
 echo "✨ Setup complete! Claude will now follow nlab-agent protocols."

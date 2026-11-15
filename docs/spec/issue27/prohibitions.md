@@ -3,7 +3,7 @@
 - 작성일: 2026-11-15
 - 승인: 사용자 위임, Fable 2라운드 토론 합의 (2026-11-15)
 - 원본: `docs/spec/issue27/emphasis-inventory.md`의 "이관" 판정 6행. `git commit`은 이관하지 않기로 결정함
-- 범위 조정(2026-11-15): deny와 ask는 이 저장소의 `.claude/settings.json`으로는 nlab-agent 안에서만 적용되어, setup으로 설정을 가져다 쓰는 다른 프로젝트를 보호하지 못한다. 그래서 이 PR에서 제외했고, 이 문서의 deny·ask 내용(패턴, 수동 검증, 한계)은 사용자 수준 설정으로 배포하는 후속 이슈의 설계 입력이다. 이 저장소에는 구현이 없다. 커밋 형식 hook은 nlab-agent의 `CONTRIBUTING.md` 규칙이라 이 저장소 전용으로 유지한다.
+- 범위 재조정(2026-11-15): 사용자 결정으로 commit-msg hook도 이 PR에서 제외했다(커밋 형식은 지시문으로 지킨다). deny·ask는 저장소 안의 `.claude/settings.json`으로는 nlab-agent 안에서만 적용되어 setup으로 설정을 가져다 쓰는 다른 프로젝트를 보호하지 못해 앞서 제외했다. 따라서 이 문서의 내용(이관 목록, 패턴, 수동 검증, Codex·agy 실측, 한계)은 모두 후속 이슈의 설계 입력이며 이 저장소에는 구현이 없다.
 
 ## 분류 기준
 - deny: 특정 도구나 명령을 정적으로 막을 수 있는 규칙 (Claude Code `permissions.deny`)

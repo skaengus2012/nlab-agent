@@ -8,7 +8,7 @@ Multi-agent orchestration protocols and platform-agnostic AI skills designed for
 - `skills/`: Platform-agnostic AI skill definitions (Markdown with YAML frontmatter).
 - `platforms/`: Platform-specific setup scripts and configurations (`antigravity`, `claude`, `codex`).
 - `PERMISSIONS.md`: Tool execution permissions configuration for agent automation.
-- `CONTRIBUTING.md`: Development guidelines and commit conventions, checked by the `commit-msg` hook once a setup script has enabled it.
+- `CONTRIBUTING.md`: Development guidelines and commit conventions. Follow them for every commit, because nothing checks the format automatically.
 
 ## Supported Platforms & Installation
 
@@ -78,11 +78,3 @@ Please review [CONTRIBUTING.md](CONTRIBUTING.md) before making changes. Commit s
 ```text
 Implement/Fix/Chore IssueNumber - Description
 ```
-
-The format is checked by the `commit-msg` hook in `.githooks/`. Running any `platforms/*/setup.sh` enables it for this repository by setting `core.hooksPath` to `.githooks`. If you did not run a setup script, enable it manually:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-The setting is stored in the repository's shared git config, so every worktree of this repository uses it; a worktree on a branch without `.githooks/` simply runs no hook. Setting `core.hooksPath` replaces `.git/hooks` and any global hooks path, so a setup script leaves the setting unchanged and prints a warning when a local or global `core.hooksPath` is already set or when an executable hook already exists in `.git/hooks`. Move or merge that hook first, then run the script again.

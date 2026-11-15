@@ -63,9 +63,6 @@ link_project_instructions() {
     echo "✅ Linked AGENTS.md -> $abs_target_dir/CLAUDE.md"
 }
 
-# shared with the other platforms: enable_commit_hook
-source "$REPO_ROOT/platforms/lib/commit_hook.sh"
-
 # Parse Arguments
 case "$1" in
     --global)
@@ -82,8 +79,6 @@ case "$1" in
         link_project_instructions "$2"
         ;;
 esac
-
-[ "${1:-}" = "--help" ] || enable_commit_hook
 
 echo ""
 echo "✨ Setup complete! Antigravity will now follow nlab-agent protocols."
