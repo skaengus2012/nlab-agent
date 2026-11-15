@@ -50,14 +50,10 @@ gh auth status
 
 ## 2. Interactive/Prompt-Required Commands (Ask Every Time)
 
-The following commands reach remote systems or are hard to undo, so the agent asks for user approval on each execution, even if documented below.
+The following commands change the remote repository or its settings, which cannot be undone from the local clone, so the agent asks for user approval on each execution, even if documented below.
 
 ```permissions:prompt-required
-git fetch
-git pull
 git push
-git clone
-git remote
 gh repo create
 gh repo delete
 gh pr merge

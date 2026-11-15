@@ -22,7 +22,7 @@
 | `PERMISSIONS.md:45`, `PERMISSIONS.md:47` | 원격·파괴 명령은 매번 승인 | ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`) (후속 이슈, 이 PR에서 제외) | 10 (취소) | 구현 없음 | 현재 `prompt-required` 블록을 반영하지 않음 (기록만) | 변환 없음 |
 
 ## 파생하지 않는 항목과 이유
-- `git fetch`, `git pull`, `git clone`, `git remote`: Claude Code 기본 모드에서 이미 프롬프트 대상이고, 빈도가 높고 위험이 낮아 ask를 추가하면 마찰만 커진다. `PERMISSIONS.md`의 `prompt-required`에는 그대로 남긴다.
+- `git fetch`, `git pull`, `git clone`, `git remote`: 원격 서버를 바꾸지 않고 로컬 참조·설정만 바꾸므로(PR 리뷰 반영) `PERMISSIONS.md`의 `prompt-required`에서도 뺐다.
 - `git commit`: 이 저장소의 일부 skill이 코멘트별 커밋을 지시하고, hook은 사용자의 요청 여부를 판정할 수 없어 이관하지 않는다.
 
 ## 한계
