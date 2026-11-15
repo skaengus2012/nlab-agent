@@ -13,15 +13,19 @@ show_help() {
     echo "Usage: ./setup.sh [OPTION] [PROJECT_PATH]"
     echo ""
     echo "Options:"
-    echo "  --global        Link skills globally to Codex (~/.codex/skills)"
+    echo "  --global        Link skills globally to Codex (~/.codex/skills) and write ~/.codex/rules/nlab-agent.rules"
     echo "  --project       Link AGENTS.md as CODEX.md to a project (Default target: current dir)"
     echo "  --all           Perform both global and project setup (Default)"
     echo "  --help          Show this help message"
 }
 
+# shared with the other platforms: apply_permissions <label> <kind> <target-file>
+source "$REPO_ROOT/platforms/lib/apply_permissions.sh"
+
 link_global_skills() {
     if [ -f "$PLATFORM_DIR/link_skills.sh" ]; then
         bash "$PLATFORM_DIR/link_skills.sh"
+        apply_permissions "Codex" codex "${CODEX_HOME:-$HOME/.codex}/rules/nlab-agent.rules"
     else
         echo "❌ Error: link_skills.sh not found at $PLATFORM_DIR"
         exit 1

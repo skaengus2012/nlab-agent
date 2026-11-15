@@ -8,7 +8,7 @@ Multi-agent orchestration protocols and platform-agnostic AI skills designed for
 - `skills/`: Platform-agnostic AI skill definitions (Markdown with YAML frontmatter).
 - `platforms/`: Platform-specific setup scripts and configurations (`antigravity`, `claude`, `codex`).
 - `PERMISSIONS.md`: Tool execution permissions configuration for agent automation.
-- `CONTRIBUTING.md`: **Core development guidelines and commit conventions (MUST follow).**
+- `CONTRIBUTING.md`: Development guidelines and commit conventions.
 
 ## Supported Platforms & Installation
 
@@ -31,7 +31,7 @@ Links skills globally (`~/.gemini/antigravity/skills/`), configures permissions,
 
 ### 🤖 Claude Code
 
-Links `AGENTS.md` as `CLAUDE.md` to establish project protocols for Claude Code:
+Links skills globally (`~/.claude/skills/`), applies the permission rules of `PERMISSIONS.md` to `~/.claude/settings.json`, and links `AGENTS.md` as `CLAUDE.md` to establish project protocols for Claude Code:
 
 ```bash
 # Link to current repository root (default)
@@ -43,7 +43,7 @@ Links `AGENTS.md` as `CLAUDE.md` to establish project protocols for Claude Code:
 
 ### 💻 OpenAI Codex
 
-Links skills globally (`~/.codex/skills/`) and creates `CODEX.md` in the target project:
+Links skills globally (`~/.codex/skills/`), writes the permission rules of `PERMISSIONS.md` to `~/.codex/rules/nlab-agent.rules`, and creates `CODEX.md` in the target project:
 
 ```bash
 # Full setup (global skills + project CODEX.md)
@@ -55,6 +55,14 @@ Links skills globally (`~/.codex/skills/`) and creates `CODEX.md` in the target 
 # Or link to a specific project directory
 ./platforms/codex/setup.sh --project /path/to/project
 ```
+
+### Permission settings written by setup
+
+The global step of each setup script applies the `auto-allow` and `prompt-required` blocks of [PERMISSIONS.md](PERMISSIONS.md) to your user-level settings, so they affect every project the agent works in. That file lists what each platform receives.
+
+- **Claude Code**: entries are added to `permissions.allow` and `permissions.ask` in `~/.claude/settings.json` (or `$CLAUDE_HOME/settings.json`). Your other settings and rules are kept and nothing is removed. A settings file that is not valid JSON is left untouched and setup prints a warning.
+- **Codex**: `~/.codex/rules/nlab-agent.rules` (or `$CODEX_HOME/rules/`) is rewritten on every run. Codex treats `allow` as "run outside the sandbox without prompting", so review the `auto-allow` list before running setup.
+- **Undo**: for Codex delete the rules file. For Claude Code remove the rules that setup added from `~/.claude/settings.json`; setup does not track which entries are its own.
 
 ## Available Skills
 
@@ -73,7 +81,7 @@ Links skills globally (`~/.codex/skills/`) and creates `CODEX.md` in the target 
 
 ## Contributing
 
-Please review [CONTRIBUTING.md](CONTRIBUTING.md) before making changes. All commits must follow the repository convention:
+Please review [CONTRIBUTING.md](CONTRIBUTING.md) before making changes. Commit subjects use the repository convention:
 
 ```text
 Implement/Fix/Chore IssueNumber - Description

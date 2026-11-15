@@ -20,7 +20,6 @@ This repository defines the core capabilities, operating protocols, and state-ma
 <state_management>
 nlab-agent uses the `.nlab/` directory for persistent state:
 - `.nlab/state/` -- Mode state files (JSON).
-- `.nlab/plans/` -- Implementation plans.
 - `.nlab/memory/` -- Project decision logs.
 </state_management>
 
@@ -31,7 +30,7 @@ nlab-agent uses the `.nlab/` directory for persistent state:
 </model_resolution>
 
 <skills>
-The following is a high-level map of available skill categories. **Always check the `skills/` directory for the full list and latest documentation.**
+The following is a high-level map of available skill categories. Check the `skills/` directory for the full list and latest documentation, because this map can lag behind it.
 
 ### 📝 PM & Planning
 - `create-plans`, `brainstorming`, `create-gh-issue`

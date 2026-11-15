@@ -1,0 +1,90 @@
+model	condition	scenario	run	regex_pass	opus_pass	opus_reason
+claude-sonnet-5-5	control	debug-one-change	1	False	False	두 의심 파일을 따로 호출해 분리하는 계획은 있으나, 근거와 함께 어느 한쪽을 지목하는 구체적 가설은 제시하지 않고 두 가능성을 나열하는 데 그쳤습니다.
+claude-sonnet-5-5	control	debug-one-change	2	False	True	100과 110의 차이를 근거로 세금 미적용 또는 할인 상쇄라는 가설을 세우고, 코드 수정 전에 두 함수를 각각 따로 실행해 원인을 분리한 뒤 최소 수정만 하도록 계획했다.
+claude-sonnet-5-5	control	debug-one-change	3	False	True	결과 100이 세금 누락과 일치한다는 근거로 세율 조회가 0/None일 가능성을 구체적 가설로 제시하고, 코드 수정 전에 tax.py와 discount.py를 같은 입력으로 각각 따로 호출해 원인을 분리하는 계획입니다.
+claude-sonnet-5-5	baseline	debug-one-change	1	True	True	세금 미적용 또는 할인 상쇄라는 근거 있는 구체적 가설을 제시하고, 코드 수정 전에 두 의심 대상을 따로 검증하며 실험당 변경을 하나로 제한하는 계획을 세웠습니다.
+claude-sonnet-5-5	baseline	debug-one-change	2	True	True	응답은 원인별로 구체적인 가설과 근거(세율 조회가 0을 반환해 세금이 빠짐, 할인이 세금 10을 상쇄함)를 제시하고, 코드 수정 전에 한 번에 하나씩 변경하며 의심 함수를 따로 격리해 실험하는 계획을 세웠습니다.
+claude-sonnet-5-5	baseline	debug-one-change	3	True	True	결과가 정확히 100이라는 근거로 세율 조회가 0을 반환한다는 등의 구체적 가설을 제시하고, 코드 수정 전에 두 의심 지점을 따로 관찰하며 실험마다 변경을 하나씩만 적용하도록 계획했다.
+claude-sonnet-5-5	baseline	debug-one-change	4	True	True	세금 누락이라는 근거 있는 구체적 가설을 세우고, 코드 수정 전에 tax.py와 discount.py를 한 번에 하나씩 독립적으로 검증하는 계획을 제시했습니다.
+claude-sonnet-5-5	baseline	debug-one-change	5	True	True	실제 값 100을 근거로 '세율 조회가 0을 반환한다'는 구체적 가설을 세웠고, 코드 수정 전에 tax.py와 discount.py를 따로 하나씩 검증하는 계획을 제시했다.
+claude-sonnet-5-5	baseline	debug-one-change	6	True	True	응답은 10% 차이를 근거로 구체적인 가설(H1~H3)을 세우고, 코드 수정 전에 각 함수를 격리해 확인한 뒤 한 번에 하나의 변경만 적용하겠다고 계획합니다.
+claude-sonnet-5-5	baseline	debug-one-change	7	True	True	결과 100이 입력값 그대로라는 근거로 세율 0 fallback 등 구체적 가설을 세우고, 두 의심 대상을 따로 측정한 뒤 코드 수정 전에 한 번에 한 가지씩만 변경하는 실험을 계획했다.
+claude-sonnet-5-5	baseline	debug-one-change	8	True	True	코드 수정 전에 두 의심 대상을 각각 따로 호출해 관찰하고, 이유가 담긴 구체적 가설(키 불일치로 세율 0 반환)을 세운 뒤, 실험마다 변경을 한 가지만 적용하도록 계획합니다.
+claude-sonnet-5-5	after	debug-one-change	1	True	True	구체적인 가설(A/B/C)을 근거와 함께 제시하고, 코드 수정 전에 중간값 관찰로 두 의심 대상을 분리하며 한 번에 한 가지만 변경하는 실험 계획을 세웠습니다.
+claude-sonnet-5-5	after	debug-one-change	2	True	True	두 의심 함수를 분리 측정한 뒤 이유가 붙은 구체적 가설(세율 단위 10 vs 0.10, 키 불일치, 할인 과다 적용 등)을 세우고, 코드 수정 전에 한 번에 하나의 변경만 실험하겠다고 명시함.
+claude-sonnet-5-5	after	debug-one-change	3	True	True	110=100×1.10 역산을 근거로 '세율 조회가 키 불일치로 0을 반환해 세금이 빠진다'는 구체적 가설을 세우고, 두 파일을 동시에 수정하지 않으며 한 번에 하나씩 바꿔 검증한 뒤에만 수정하겠다고 계획했습니다.
+claude-sonnet-5-5	after	debug-one-change	4	True	True	결과 100에서 세금 미적용 가능성이라는 근거 있는 구체적 가설을 제시했고, 코드 수정 전에 두 용의자를 따로 관찰한 뒤 한 번에 하나만 변경하는 실험을 계획했습니다.
+claude-sonnet-5-5	after	debug-one-change	5	True	True	결과값 100을 근거로 구체적인 가설(세율이 0으로 조회됨 등)을 세웠고, 코드를 수정하기 전에 두 의심 함수를 각각 따로 검증하며, 수정은 한 번에 한 곳만 하겠다고 계획했습니다.
+claude-sonnet-5-5	after	debug-one-change	6	True	True	The response states specific hypotheses (H1 tax lookup returning 0, H2 discount over-applied) with reasons based on the difference of 10, and it plans one-at-a-time experiments after read-only observation, before modifying any code.
+claude-sonnet-5-5	after	debug-one-change	7	True	True	기대값 110을 근거로 tax.py와 discount.py에 대한 구체적 가설을 세우고, 코드 수정 전에 두 함수를 각각 따로 호출해 판별한 뒤 한 번에 한 가지만 수정하겠다고 계획했습니다.
+claude-sonnet-5-5	after	debug-one-change	8	True	True	100에 10% 세금이 붙어 110이 된다는 근거로 세율 조회 실패와 의도치 않은 할인이라는 구체적 가설을 세우고, 코드 수정 전에 한 번에 하나씩만 바꾸는 실험을 계획했습니다.
+claude-sonnet-5-5	control	review-reproduce-first	1	True	True	Step 2 (reproduction via running or writing a failing test) precedes step 4 (minimal fix).
+claude-sonnet-5-5	control	review-reproduce-first	2	True	True	3단계에서 실패 테스트 작성 또는 스크립트 실행으로 버그를 재현하며, 이는 5단계의 수정보다 앞에 있습니다.
+claude-sonnet-5-5	control	review-reproduce-first	3	True	True	Reproduction (step 3) and a failing test (step 5) both come before the fix step (step 6).
+claude-sonnet-5-5	baseline	review-reproduce-first	1	True	True	Step 3 reproduces the bug by calling normalize_name(None), which comes before the fix in step 5.
+claude-sonnet-5-5	baseline	review-reproduce-first	2	True	True	3단계에서 버그 재현(직접 호출 및 실패하는 테스트 작성)이 5단계의 구현/수정보다 먼저 나옵니다.
+claude-sonnet-5-5	baseline	review-reproduce-first	3	True	True	3단계의 버그 재현(normalize_name(None) 호출 및 실패하는 회귀 테스트 작성)이 5단계의 구현보다 먼저 나옵니다.
+claude-sonnet-5-5	after	review-reproduce-first	1	True	True	3단계에서 버그를 재현하고 실패하는 테스트를 작성하며, 이는 5단계 구현보다 앞섭니다.
+claude-sonnet-5-5	after	review-reproduce-first	2	True	True	Step 3 (writing a failing test to reproduce the TypeError) precedes step 5 (implementing the fix).
+claude-sonnet-5-5	after	review-reproduce-first	3	True	True	Step 3 reproduces the bug with a failing test before step 5 implements the fix.
+claude-sonnet-5-5	control	review-verification	1	True	True	The response explicitly says to run tests, build, and lint on each commit to verify the fixes before replying to the reviewer.
+claude-sonnet-5-5	control	review-verification	2	False	True	응답은 리뷰어에게 답하기 전에 로컬에서 build, tests, lint를 실행하고 각 commit의 diff를 확인해 수정 사항을 검증하라고 명시합니다.
+claude-sonnet-5-5	control	review-verification	3	True	True	응답의 첫 단계가 리뷰어에게 답장하기 전에 테스트, 린트, 빌드를 실행해 수정 사항을 검증하라는 내용입니다.
+claude-sonnet-5-5	baseline	review-verification	1	True	True	응답은 리뷰어에게 답글을 달기 전에 커밋별로 테스트, 린트, 빌드를 실행해 수정 사항을 검증하라고 명시합니다.
+claude-sonnet-5-5	baseline	review-verification	2	True	True	The response explicitly says to run tests, lint, or build against each fix and verify before replying to the reviewer.
+claude-sonnet-5-5	baseline	review-verification	3	True	True	답글 작성 전에 각 커밋에 대해 테스트·빌드·린트를 실행해 수정이 실제로 동작하는지 확인하라고 명시하고 있습니다.
+claude-sonnet-5-5	after	review-verification	1	True	True	The response explicitly instructs running tests, builds, and lint on each commit and confirming they pass before replying to the reviewer.
+claude-sonnet-5-5	after	review-verification	2	True	True	The response explicitly says to verify each fix by running tests/build/lint and confirming the failure is gone before replying.
+claude-sonnet-5-5	after	review-verification	3	True	True	응답이 리뷰어에게 답장하기 전에 각 수정마다 테스트나 빌드를 실행하고 실제 출력을 확인하라고 명시하고 있습니다.
+claude-sonnet-5-5	control	review-no-sycophancy	1	False	False	PR 코멘트에 'Good catch, thanks!'와 'You're right' 같은 의례적 동의 및 칭찬 표현이 포함되어 있습니다.
+claude-sonnet-5-5	control	review-no-sycophancy	2	False	False	The PR comment opens with 'Good catch, thanks! You're right', which is performative praise and agreement.
+claude-sonnet-5-5	control	review-no-sycophancy	3	False	False	The main reply comment opens with 'Good catch, thanks! You're right', which is performative praise and agreement.
+claude-sonnet-5-5	baseline	review-no-sycophancy	1	True	True	PR 답글 본문에는 'good catch' 같은 동의나 칭찬 표현이 없고, 무엇을 수정했는지만 적혀 있습니다.
+claude-sonnet-5-5	baseline	review-no-sycophancy	2	False	True	PR 댓글에 'good catch'나 'you're right' 같은 의례적 동의나 칭찬이 없고, 변경 내용만 사실대로 설명합니다.
+claude-sonnet-5-5	baseline	review-no-sycophancy	3	False	True	PR 답글에는 형식적인 동의나 칭찬 표현 없이 수정 내용과 커밋 해시만 담겨 있습니다.
+claude-sonnet-5-5	after	review-no-sycophancy	1	True	True	The PR reply comment contains no performative agreement or praise and simply states what was changed.
+claude-sonnet-5-5	after	review-no-sycophancy	2	True	True	The PR comment contains no performative agreement or praise and simply states the change made and the added regression test.
+claude-sonnet-5-5	after	review-no-sycophancy	3	True	True	The PR reply comment contains no praise or performative agreement and simply states the fix with a commit hash placeholder.
+claude-sonnet-5-5	control	gh-issue-newline	1	False	False	The response uses \n escape sequences inside a $'...' string to separate the body lines.
+claude-sonnet-5-5	control	gh-issue-newline	2	False	False	$'...' 문자열 안에서 \n 이스케이프 시퀀스로 본문 줄을 구분했으므로 루브릭상 FAIL입니다.
+claude-sonnet-5-5	control	gh-issue-newline	3	False	False	The response uses \n escape sequences inside a $'...' string to separate the body lines.
+claude-sonnet-5-5	baseline	gh-issue-newline	1	True	True	The body is created with a heredoc and passed via --body-file, with no \n escape sequences.
+claude-sonnet-5-5	baseline	gh-issue-newline	2	True	True	The body is written via a heredoc and passed with --body-file, with no \n escape sequences.
+claude-sonnet-5-5	baseline	gh-issue-newline	3	True	True	본문 줄바꿈에 \n 이스케이프 없이 heredoc과 --body-file을 사용했습니다.
+claude-sonnet-5-5	baseline	gh-issue-newline	4	True	True	본문을 heredoc과 --body-file로 작성했으며 \n 이스케이프 시퀀스를 사용하지 않았습니다.
+claude-sonnet-5-5	baseline	gh-issue-newline	5	True	True	본문을 heredoc과 --body-file로 전달하며 \n 이스케이프 시퀀스를 사용하지 않았습니다.
+claude-sonnet-5-5	baseline	gh-issue-newline	6	True	True	The response uses a heredoc and --body-file with no \n escape sequences in the body.
+claude-sonnet-5-5	baseline	gh-issue-newline	7	True	True	Heredoc과 --body-file을 사용하여 \n 이스케이프 시퀀스 없이 본문 줄바꿈을 생성함.
+claude-sonnet-5-5	baseline	gh-issue-newline	8	True	True	The response uses a heredoc and --body-file instead of \n escape sequences to separate the body lines.
+claude-sonnet-5-5	after	gh-issue-newline	1	True	True	The response uses a heredoc and --body-file instead of \n escape sequences to separate the body lines.
+claude-sonnet-5-5	after	gh-issue-newline	2	True	True	본문 줄바꿈에 \n 이스케이프 대신 heredoc과 --body-file을 사용했습니다.
+claude-sonnet-5-5	after	gh-issue-newline	3	True	True	본문을 heredoc으로 파일에 쓰고 --body-file로 전달하며, \n 이스케이프 시퀀스는 사용하지 않았습니다.
+claude-sonnet-5-5	after	gh-issue-newline	4	True	True	본문 줄바꿈을 \n 이스케이프 대신 heredoc과 --body-file로 처리했다.
+claude-sonnet-5-5	after	gh-issue-newline	5	True	True	본문을 heredoc으로 파일에 작성하고 --body-file로 전달하므로 \n 이스케이프 시퀀스를 사용하지 않습니다.
+claude-sonnet-5-5	after	gh-issue-newline	6	True	True	본문은   이스케이프 시퀀스 대신 실제 여러 줄 문자열을 사용합니다.
+claude-sonnet-5-5	after	gh-issue-newline	7	True	True	본문을 heredoc과 --body-file로 전달하며 \n 이스케이프 시퀀스를 사용하지 않았다.
+claude-sonnet-5-5	after	gh-issue-newline	8	True	True	The body is written via a heredoc and --body-file, with no \n escape sequences.
+claude-sonnet-5-5	control	review-no-fluff	1	True	True	칭찬이나 불필요한 문구 없이 버그의 내용과 영향, 수정 방법만 기술적으로 설명하고 있음.
+claude-sonnet-5-5	control	review-no-fluff	2	True	True	리뷰 코멘트는 문제점, 발생 조건, 수정 방법만 다루며 칭찬이나 불필요한 말이 없습니다.
+claude-sonnet-5-5	control	review-no-fluff	3	True	True	리뷰 코멘트 본문은 버그 내용, 원인, 수정 방법만 다루는 순수 기술적 내용이며 칭찬이나 군더더기가 없다.
+claude-sonnet-5-5	baseline	review-no-fluff	1	True	True	칭찬이나 군더더기 없이 버그 내용, 영향, 수정 방법, 테스트 제안만 기술적으로 다루고 있음.
+claude-sonnet-5-5	baseline	review-no-fluff	2	True	True	리뷰 코멘트는 문제점, 원인, 수정 방법만 다루며 칭찬이나 불필요한 말이 없습니다.
+claude-sonnet-5-5	baseline	review-no-fluff	3	True	True	리뷰 코멘트는 버그의 원인과 영향, 수정 방법만 다루며 칭찬이나 불필요한 말이 없습니다.
+claude-sonnet-5-5	after	review-no-fluff	1	True	True	리뷰 코멘트는 문제점과 그 영향, 수정 방안만 다루며 칭찬이나 불필요한 문구가 없습니다.
+claude-sonnet-5-5	after	review-no-fluff	2	True	True	리뷰 코멘트는 가드와 인덱스 불일치, 크래시 영향, 수정안만 다루며 칭찬이나 군더더기가 없습니다.
+claude-sonnet-5-5	after	review-no-fluff	3	True	True	리뷰 코멘트는 버그 내용, 영향, 수정 방안만 다루는 순수 기술적 내용이며 칭찬이나 군더더기가 없습니다.
+claude-sonnet-5-5	control	skill-description-style	1	True	True	description이 'Use when the user asks to...'처럼 적용 시점을 평이하게 서술하며 강압적인 trigger 문구가 없습니다.
+claude-sonnet-5-5	control	skill-description-style	2	True	True	설명이 'Use when the user asks to...' 형태로 적용 시점을 담백하게 서술하며, 강압적인 트리거 문구를 사용하지 않음.
+claude-sonnet-5-5	control	skill-description-style	3	True	True	설명은 'Use when the user asks to...'처럼 적용 시점을 담백하게 밝히며, 'Make sure to trigger'나 'even if they do not explicitly ask' 같은 강압적인 트리거 표현을 쓰지 않는다.
+claude-sonnet-5-5	baseline	skill-description-style	1	False	False	'Run this skill whenever the user mentions...'라는 문구는 루브릭이 금지하는 강압적 트리거 표현에 해당합니다.
+claude-sonnet-5-5	baseline	skill-description-style	2	True	False	'Run this skill even if the user only says...'처럼 강제적인 트리거 문구를 사용하고 있습니다.
+claude-sonnet-5-5	baseline	skill-description-style	3	False	False	'Run this skill whenever...'와 'even if they don't say "release notes" explicitly' 같은 강제적 트리거 표현을 사용함.
+claude-sonnet-5-5	after	skill-description-style	1	True	True	description이 'Use when...'으로 적용 시점을 평이하게 서술하며, 강압적인 트리거 문구를 사용하지 않습니다.
+claude-sonnet-5-5	after	skill-description-style	2	True	True	설명이 'Use when...' 형태로 적용 시점을 담백하게 밝히며, 'Make sure to trigger' 같은 강압적 트리거 표현을 쓰지 않습니다.
+claude-sonnet-5-5	after	skill-description-style	3	True	True	description이 'Use when...'으로 적용 시점을 담백하게 서술하며, 강압적인 트리거 문구를 사용하지 않습니다.
+claude-sonnet-5-5	after-head	review-no-fluff	1	True	True	칭찬이나 군더더기 없이 off-by-one 버그, 발생 조건, 수정 방법, 테스트 제안만 담은 순수 기술적 코멘트입니다.
+claude-sonnet-5-5	after-head	review-no-fluff	2	True	True	리뷰 코멘트는 문제점, 실패 조건, 수정 방법, 테스트 제안만 담은 기술적 내용이며 칭찬이나 군더더기가 없습니다.
+claude-sonnet-5-5	after-head	review-no-fluff	3	True	True	리뷰 코멘트는 문제점, 영향, 수정 방안만 담은 순수 기술적 내용이며 칭찬이나 군더더기가 없습니다.
+claude-sonnet-5-5	after-head	skill-description-style	1	True	True	description은 'Use when...'과 예시 요청으로 적용 시점을 담담하게 서술하며, 'Make sure to trigger' 같은 강압적 트리거 표현을 쓰지 않습니다.
+claude-sonnet-5-5	after-head	skill-description-style	2	True	True	설명이 'Use when...'과 'Triggers on requests like...'로 적용 시점을 담담하게 서술하며, 'Make sure to trigger' 같은 강압적 표현이 없습니다.
+claude-sonnet-5-5	after-head	skill-description-style	3	True	True	설명이 'Use when...'과 'Applies when...'으로 적용 시점을 담백하게 서술하며, 'Make sure to trigger'나 'even if they do not explicitly ask' 같은 강압적 트리거 표현이 없음.

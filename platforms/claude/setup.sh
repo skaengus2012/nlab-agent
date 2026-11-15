@@ -14,15 +14,19 @@ show_help() {
     echo "Usage: ./setup.sh [OPTION] [PROJECT_PATH]"
     echo ""
     echo "Options:"
-    echo "  --global        Link skills globally to Claude Code (~/.claude/skills)"
+    echo "  --global        Link skills globally to Claude Code (~/.claude/skills) and apply PERMISSIONS.md to ~/.claude/settings.json"
     echo "  --project       Link AGENTS.md as CLAUDE.md to a project"
     echo "  --all           Perform both global and project setup (Default)"
     echo "  --help          Show this help message"
 }
 
+# shared with the other platforms: apply_permissions <label> <kind> <target-file>
+source "$REPO_ROOT/platforms/lib/apply_permissions.sh"
+
 link_global_skills() {
     if [ -f "$PLATFORM_DIR/link_skills.sh" ]; then
         bash "$PLATFORM_DIR/link_skills.sh"
+        apply_permissions "Claude Code" claude "${CLAUDE_HOME:-$HOME/.claude}/settings.json"
     else
         echo "❌ Error: link_skills.sh not found at $PLATFORM_DIR"
         exit 1

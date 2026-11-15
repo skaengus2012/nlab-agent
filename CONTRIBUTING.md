@@ -4,7 +4,7 @@ This repository follows a specific set of rules for development and maintenance.
 
 ## Commit Message Convention
 
-All commit messages must follow this strict format:
+All commit messages follow this format:
 
 `Implement/Fix/Chore IssueNumber - Description`
 
