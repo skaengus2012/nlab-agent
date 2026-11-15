@@ -2,7 +2,7 @@
 
 This file defines the global command permission grants allowed in the developer agent environments (such as Antigravity, Claude Code, Cursor, etc.) during the development and automation of the `nlab-agent` repository.
 
-The Antigravity setup script parses the `auto-allow` block and applies it to its local settings. The `claude-ask` block is mirrored by hand into this repository's `.claude/settings.json` and checked by `tests/permissions.test.sh`.
+The Antigravity setup script parses the `auto-allow` block and applies it to its local settings. `tests/permissions.test.sh` checks that no `prompt-required` command is covered by an `auto-allow` entry.
 
 ---
 
@@ -61,15 +61,4 @@ git remote
 gh repo create
 gh repo delete
 gh pr merge
-```
-
-### Claude Code enforcement
-
-Claude Code does not read the blocks above. The subset below is derived into `permissions.ask` of this repository's `.claude/settings.json`, and `tests/permissions.test.sh` keeps the two in sync. The remaining commands (`git fetch`, `git pull`, `git clone`, `git remote`) already prompt in Claude Code's default mode unless the user has allowed them, so they are not derived.
-
-```permissions:claude-ask
-git push
-gh pr merge
-gh repo create
-gh repo delete
 ```

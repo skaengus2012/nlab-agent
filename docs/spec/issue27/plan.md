@@ -26,13 +26,13 @@
   - 예외 제목: git이 만드는 형태만 허용한다 (`Merge branch `, `Merge pull request `, `Merge remote-tracking branch `, `Merge tag `, `Merge commit `, `Revert "`, `Reapply "`, `fixup! `, `squash! `, `amend! `). 임의의 `Merge `·`Revert ` 접두어는 예외가 아니다
   - 제목 판정: git의 주석 줄(`#` 단독 또는 `# `로 시작)과 선행 빈 줄을 건너뛴 첫 유효 줄. `#bad`처럼 `#` 바로 뒤에 글자가 이어지는 줄은 제목으로 검사한다. 제목은 500자를 넘으면 거부한다
   - 활성화: `platforms/*/setup.sh`가 `--help`를 제외한 모든 분기에서 별도 함수로 `git -C "$REPO_ROOT" rev-parse --show-toplevel`의 결과가 `REPO_ROOT`의 실제 경로(`pwd -P`)와 같을 때만 `git -C "$REPO_ROOT" config core.hooksPath .githooks`를 실행하고, 아니면 `skip`을 출력한다. `set -e` 환경에서 git 저장소가 아닌 사본(zip 등)이 중단되지 않게 하고, 상위 디렉터리의 다른 저장소 설정을 바꾸지 않게 하는 가드다. 대상이 이 저장소뿐이므로 임의 프로젝트에는 영향이 없다. hook 파일에는 실행 권한이 필요하다.
-  - 우회 차단: 이 저장소의 `.claude/settings.json` `permissions.deny`에 4개 패턴을 둔다: `Bash(git *--no-verify*)`, `Bash(git commit -n*)`, `Bash(git *core.hooksPath*)`, `Bash(git commit * -n *)` 에 더해, 수동 검증에서 끝에 오는 `-n`이 막히지 않아 `Bash(git commit * -n)`를 추가했다(5개). 검토에서 git 설정 키가 대소문자를 구분하지 않아 소문자 `core.hookspath`가 통과하는 것을 확인해 `Bash(git *hookspath*)`를 더했다(총 6개). 나머지 우회(결합 플래그 `-anm`, 환경변수 `GIT_CONFIG_COUNT` 등)는 Bash 규칙이 보안 경계가 아니므로 막지 못하며 한계로 `prohibitions.md`에 기록한다. 세 번째 패턴은 `git config --get core.hooksPath` 같은 읽기 명령도 막고, 네 번째는 메시지에 ` -n `이 들어간 `git commit -m "fix -n handling"`을 오탐할 수 있다.
+  - (취소: 변경 이력 2026-11-15 "범위 조정" 참조) 우회 차단: 이 저장소의 `.claude/settings.json` `permissions.deny`에 4개 패턴을 둔다: `Bash(git *--no-verify*)`, `Bash(git commit -n*)`, `Bash(git *core.hooksPath*)`, `Bash(git commit * -n *)` 에 더해, 수동 검증에서 끝에 오는 `-n`이 막히지 않아 `Bash(git commit * -n)`를 추가했다(5개). 검토에서 git 설정 키가 대소문자를 구분하지 않아 소문자 `core.hookspath`가 통과하는 것을 확인해 `Bash(git *hookspath*)`를 더했다(총 6개). 나머지 우회(결합 플래그 `-anm`, 환경변수 `GIT_CONFIG_COUNT` 등)는 Bash 규칙이 보안 경계가 아니므로 막지 못하며 한계로 `prohibitions.md`에 기록한다. 세 번째 패턴은 `git config --get core.hooksPath` 같은 읽기 명령도 막고, 네 번째는 메시지에 ` -n `이 들어간 `git commit -m "fix -n handling"`을 오탐할 수 있다.
 - **원본과 파생물**: `PERMISSIONS.md`가 원본이다.
-  - `PERMISSIONS.md`에 새 블록 `permissions:claude-ask`를 추가한다. 항목은 `git push`, `gh pr merge`, `gh repo create`, `gh repo delete` 4개다. `prompt-required` 블록은 그대로 둔다 (Antigravity 파서는 `auto-allow` 블록만 읽으므로 영향이 없다).
-  - `.claude/settings.json`의 `permissions.ask`는 `claude-ask`에서 파생한다 (`Bash(git push *)` 형태, 인자 없는 `git push`는 `Bash(git push)`를 함께 둔다).
+  - (취소: 같은 이유) `PERMISSIONS.md`에 새 블록 `permissions:claude-ask`를 추가한다. 항목은 `git push`, `gh pr merge`, `gh repo create`, `gh repo delete` 4개다. `prompt-required` 블록은 그대로 둔다 (Antigravity 파서는 `auto-allow` 블록만 읽으므로 영향이 없다).
+  - (취소: 같은 이유) `.claude/settings.json`의 `permissions.ask`는 `claude-ask`에서 파생한다 (`Bash(git push *)` 형태, 인자 없는 `git push`는 `Bash(git push)`를 함께 둔다).
   - `git fetch`, `git pull`, `git clone`, `git remote`는 파생하지 않는다. Claude Code 기본 모드에서 이미 프롬프트 대상이고, 빈도가 높고 위험이 낮아 마찰만 커지기 때문이며 이 이유를 `prohibitions.md`에 적는다.
   - `auto-allow`의 `gh pr`는 `gh pr view`, `gh pr list`, `gh pr diff`, `gh pr checks`, `gh pr status`, `gh pr create`, `gh pr comment`로 분할한다. `platforms/claude/setup.sh`는 `PERMISSIONS.md`를 읽지 않으므로 이 충돌은 Antigravity에서만 실제로 일어난다. Antigravity 기존 설치에는 소급되지 않고(`gh pr merge`가 자동 허용된 상태로 남음) `gh pr edit`, `close` 등에 새 프롬프트가 생기는 점을 `prohibitions.md`에 기록한다.
-  - `tests/permissions.test.sh`는 세 가지를 검사한다. (1) `.claude/settings.json`의 ask가 `claude-ask` 블록과 같다 (접두 `Bash(`와 접미 ` *)` 제거 후 집합 비교). (2) `claude-ask` ⊆ `prompt-required`. (3) `prompt-required` 항목이 `auto-allow` 항목을 접두로 갖지 않는다.
+  - (축소: (3)만 남김) `tests/permissions.test.sh`는 세 가지를 검사한다. (1) `.claude/settings.json`의 ask가 `claude-ask` 블록과 같다 (접두 `Bash(`와 접미 ` *)` 제거 후 집합 비교). (2) `claude-ask` ⊆ `prompt-required`. (3) `prompt-required` 항목이 `auto-allow` 항목을 접두로 갖지 않는다.
   - `gh api`, `git config`를 통한 ask 우회는 한계로 기록하고 별도 이슈 후보로 둔다.
 - **적용 범위**: 커밋 형식은 `CONTRIBUTING.md:29`대로 이 저장소 전용 규칙이다. 다른 프로젝트로 배포하지 않으며 임의 프로젝트에 설정을 병합하는 setup 변경도 하지 않는다.
 - **플랫폼**: git hook은 플랫폼 무관이다. deny/ask 설정은 Claude Code 전용이며, Antigravity와 Codex는 항목별 적용 여부를 기록만 한다.
@@ -46,7 +46,7 @@
 | 조정 방식 | 강조 제거 + 이유 문장화 | 확정 |
 | 절대 금지 목록 | `commit-msg` hook, deny 6패턴, ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`). `git commit`은 이관하지 않음 | 확정 (사용자 위임, Fable 2라운드 합의) |
 | hook 대상 플랫폼 | git hook(공통) + Claude Code deny/ask | 확정 |
-| hook 설정 위치·배포 | `.githooks/`, 저장소 `.claude/settings.json`, setup이 `core.hooksPath`만 설정 | 확정 |
+| hook 설정 위치·배포 | `.githooks/`, 저장소 `.claude/settings.json`, setup이 `core.hooksPath`만 설정 | 확정 → 변경: `.claude/settings.json`은 제외(변경 이력 참조) |
 | hook 불가 항목 | 지시문으로 두고 이유를 적음 | 확정 |
 | 산출물 범위 | 수정과 hook 구현까지 포함 | 확정 |
 | 행동 평가 방식 | 위 "행동 평가 설계": 자동(`run.sh`), 2단계, Sonnet 5.5 판정 + Haiku 5.5 보고용, 총 캡 25달러 | 확정 (사용자 위임, Fable 2라운드 합의). 첫 모델 호출 전에 사용자에게 시작을 알림 |
@@ -91,15 +91,15 @@
    - 위 가드 함수는 `platforms/lib/commit_hook.sh`에 한 번만 두고, `platforms/antigravity/setup.sh`, `platforms/claude/setup.sh`, `platforms/codex/setup.sh`가 `source`로 불러 `--help`를 제외한 분기에서 호출한다 (PR 리뷰 반영: 3곳 중복 제거).
    - `README.md`에 hook 안내를 추가하고, `CONTRIBUTING.md`에 "hook 수정 시 `bash tests/commit-msg.test.sh` 실행" 한 줄을 추가한다.
    - **Verify**: `grep -c "^enable_commit_hook()" platforms/lib/commit_hook.sh` 가 1이고 `platforms/*/setup.sh`에는 함수 정의가 없으며 `bash -n`이 통과한다. git 저장소 밖 `mktemp -d` 아래에 작업 트리를 `rsync -a --exclude .git`으로 복사하고 `git init`한 사본(이 worktree의 `.git`은 실제 저장소를 가리키는 파일이므로 복사하지 않는다)에서 `CLAUDE_HOME="$(mktemp -d)" ./platforms/claude/setup.sh --global` 을 실행한 뒤 `test "$(git -C <사본> rev-parse --git-path hooks)" = ".githooks"` 가 성공한다. `.git` 없는 사본(git 저장소 밖 `mktemp -d` 아래에 `rsync -a --exclude .git`)에서도 같은 명령이 종료 코드 0이고 상위 저장소 설정이 바뀌지 않는다. 실제 `~/.claude`, `~/.gemini` 설정과 이 저장소의 `core.hooksPath`는 검증에서 건드리지 않으며, 검증 끝에 이 저장소에서 `git rev-parse --git-path hooks` 가 `.githooks`가 아닌 기존 경로를 반환함을 확인한다 (`git config --get core.hooksPath`는 deny 패턴에 걸리므로 쓰지 않는다). Antigravity와 Codex setup은 실행하지 않는다.
-10. `PERMISSIONS.md`에 `permissions:claude-ask` 블록(4개 항목)을 추가하고 `auto-allow`의 `gh pr`를 설계 절대로 분할한다. 같은 4개를 `.claude/settings.json`의 `permissions.ask`에 파생한다. 일치 검사는 `tests/permissions.test.sh`로 남긴다.
+10. `PERMISSIONS.md`에 `permissions:claude-ask` 블록(4개 항목)을 추가하고 `auto-allow`의 `gh pr`를 설계 절대로 분할한다. (`claude-ask` 블록과 `.claude/settings.json` 파생은 취소.) `prompt-required`가 `auto-allow`에 덮이지 않는지의 검사만 `tests/permissions.test.sh`로 남긴다.
     - **Verify**: `bash tests/permissions.test.sh; echo $?` 가 0이다.
 11. `skills/writing-skills/SKILL.md`의 작성 지침("No exceptions:" 카운터 추가, "Pushy Description")을 이유 중심 지침으로 조정한다.
     - **Verify**: `grep -nE "No exceptions|Pushy" skills/writing-skills/SKILL.md` 결과가 없다.
 12. `skills/*/SKILL.md` 11개의 전수 목록을 `emphasis-inventory.md`에 추가한다. 트리거용 `description`의 유지 여부와 사유도 이 목록에서 판정한다.
     - **Verify**: 작업 7과 같은 방식으로 `skills/`의 grep 결과가 모두 목록에 존재하고, "유지" 줄은 `emphasis-keep.txt`에 추가한다.
 
-13. `.claude/settings.json`에 설계 절의 `permissions.deny` 6패턴을 추가한다.
-    - **Verify**: `python3 -c "import json;json.load(open('.claude/settings.json'))"` 가 성공한다. 설계 절의 각 우회 형태를 Claude Code 세션에서 수동으로 시도해 거부 여부를 `prohibitions.md`의 표에 기록하고, 거부되지 않은 형태는 한계로 적는다. 추가로 다음을 확인해 기록한다: `--permission-mode bypassPermissions`에서 `git push --dry-run`이 프롬프트를 띄우는지, `-p --permission-prompts none`에서 거부되는지, `git -C . push --dry-run`이 통과하는지(한계 기록), `git commit -m x -n`과 인자 없는 `git push`가 패턴에 잡히는지(안 잡히면 `Bash(git push)` 같은 인자 없는 형태를 함께 추가). 시도는 스테이징이 빈 상태에서 하고, `core.hooksPath` 시험은 값을 `.githooks`로 주어 부작용이 없게 한다.
+13. ~~`.claude/settings.json`에 설계 절의 `permissions.deny` 6패턴을 추가한다.~~ (Dropped: 이 저장소의 파일은 nlab-agent 안에서만 적용되어 setup으로 다른 프로젝트에 배포되는 목적에 맞지 않는다. 사용자 수준 설정으로 배포하는 후속 이슈에서 다룬다. 수동 검증 기록은 `prohibitions.md`에 남김)
+    - (취소됨) **Verify**: `python3 -c "import json;json.load(open('.claude/settings.json'))"` 가 성공한다. 설계 절의 각 우회 형태를 Claude Code 세션에서 수동으로 시도해 거부 여부를 `prohibitions.md`의 표에 기록하고, 거부되지 않은 형태는 한계로 적는다. 추가로 다음을 확인해 기록한다: `--permission-mode bypassPermissions`에서 `git push --dry-run`이 프롬프트를 띄우는지, `-p --permission-prompts none`에서 거부되는지, `git -C . push --dry-run`이 통과하는지(한계 기록), `git commit -m x -n`과 인자 없는 `git push`가 패턴에 잡히는지(안 잡히면 `Bash(git push)` 같은 인자 없는 형태를 함께 추가). 시도는 스테이징이 빈 상태에서 하고, `core.hooksPath` 시험은 값을 `.githooks`로 주어 부작용이 없게 한다.
 14. 행동 평가 도구를 만든다. 설계 절의 시나리오마다 `docs/spec/issue27/evals/<skill>.md`에 시나리오와 통과 조건(grep 패턴)을 적고, 설계 절의 실행 명령을 고정한 `docs/spec/issue27/evals/run.sh <지시문 디렉터리> <출력 디렉터리>`를 작성한다. `run.sh`는 순차 실행하고 이미 끝난 실행은 건너뛴다.
     - **Verify**: `bash -n docs/spec/issue27/evals/run.sh` 가 성공한다. 전후 사본에 서로 다른 표식 문자열을 넣고 모델이 각각 해당 표식을 답하는지 1회씩 확인해 격리를 입증하고, 시스템 프롬프트 주입과 fixture 로딩 두 방식을 1회씩 비교해 기록한다. 격리 확인의 `total_cost_usd`로 캡을 재산정해 기록한다. 시나리오 수가 상한 8 이하이고 전역 설정 배제 여부가 `evals/README.md`에 기록되어 있다. `run.sh`는 실행마다 fixture를 새로 복사하며, 모델 ID와 CLI 버전(`claude --version`, `--append-system-prompt-file`이 문서화되지 않은 플래그임을 포함)을 `evals/README.md`와 결과 파일에 기록한다. 첫 모델 호출 전에 사용자에게 시작을 알리고 구독 사용 한도 상태를 확인한다.
 15. 변경 후 같은 시나리오를 설계 절의 2단계 규칙대로 재실행해 기준선과 비교한다. 변경 전 사본은 기준 커밋 `ce89007`에서 `git show`로, 변경 후 사본은 작업 트리에서 만든 임시 디렉터리를 쓰며 실제 `~/.claude` 설정은 건드리지 않는다. 재작성이 있었다면 `emphasis-inventory.md`와 `emphasis-keep.txt`를 갱신하고 검증 절 전체를 다시 실행한다.
@@ -140,3 +140,4 @@
 | 2026-11-15 | 독립 검토에서 미뤘던 hook 결함 수정(테스트 5건을 먼저 추가해 RED 확인 후 구현, 29건 통과): `#` 접두 제목 우회, `Merge `·`Revert ` 접두어 우회(git이 만드는 형태로 한정), `amend!` 오탐, 제목 500자 상한. 알려진 우회 목록에서 해당 항목 제거 | 사용자 확인, Fable 독립 검토 |
 | 2026-11-15 | PR #28 리뷰 반영: `enable_commit_hook` 39줄이 3개 setup.sh에 동일하게 복사돼 있던 것을 `platforms/lib/commit_hook.sh`로 추출(`tests/setup-hook.test.sh` 10건·`tests/commit-msg.test.sh` 29건 전후 동일 통과). 작업 9 서술 갱신 | 리뷰 코멘트 |
 | 2026-11-15 | PR #28 후속 리뷰 반영: ① CRLF 줄바꿈에서 `#\r` 주석 줄이 제목으로 오인되어 정상 메시지가 거부되는 결함과 octopus merge 기본 메시지(`Merge branches '...'`) 거부를 재현해 확인하고, 테스트 6건을 먼저 추가해 RED 2건 확인 후 hook 수정(35건 통과) ② Codex 0.169.0·agy 1.5.9 실제 커밋 검증을 수행해 `prohibitions.md`에 기록 | 리뷰 코멘트, 사용자 요청 |
+| 2026-11-15 | 범위 조정: 이 저장소가 다른 프로젝트에 설정을 배포하는 원본이라는 점을 확인. 저장소 안 `.claude/settings.json`(`deny` 6패턴, `ask` 8항목)은 nlab-agent 안에서만 적용되어 목적에 맞지 않아 제외하고, `PERMISSIONS.md`의 `claude-ask` 블록과 `tests/permissions.test.sh`의 관련 검사도 제거(`prompt-required` 대 `auto-allow` 검사는 유지). 작업 13 취소, 작업 10 축소. FR-3은 커밋 형식 hook(전 플랫폼)까지만 충족하고 `deny`·`ask`의 사용자 수준 배포는 후속 이슈로 분리. 커밋 형식 hook은 nlab-agent의 `CONTRIBUTING.md` 규칙이라 이 저장소 전용으로 유지 | 사용자 지시 |

@@ -35,7 +35,5 @@ When you change the hook, run `bash tests/commit-msg.test.sh` and make sure it e
 
 ## Enforcement Levels
 Rules are enforced at the strongest level available, and prose is used only where nothing else can enforce them:
-- **deny**: a command that can be statically blocked (Claude Code `permissions.deny`).
-- **ask**: a command that needs the user's approval every time (Claude Code `permissions.ask`).
 - **hook**: a rule that can be checked from its input, such as the commit message format.
 - **instruction**: a rule that cannot be enforced by the above. State the reason instead of adding emphasis.

@@ -3,6 +3,7 @@
 - 작성일: 2026-11-15
 - 승인: 사용자 위임, Fable 2라운드 토론 합의 (2026-11-15)
 - 원본: `docs/spec/issue27/emphasis-inventory.md`의 "이관" 판정 6행. `git commit`은 이관하지 않기로 결정함
+- 범위 조정(2026-11-15): deny와 ask는 이 저장소의 `.claude/settings.json`으로는 nlab-agent 안에서만 적용되어, setup으로 설정을 가져다 쓰는 다른 프로젝트를 보호하지 못한다. 그래서 이 PR에서 제외했고, 이 문서의 deny·ask 내용(패턴, 수동 검증, 한계)은 사용자 수준 설정으로 배포하는 후속 이슈의 설계 입력이다. 이 저장소에는 구현이 없다. 커밋 형식 hook은 nlab-agent의 `CONTRIBUTING.md` 규칙이라 이 저장소 전용으로 유지한다.
 
 ## 분류 기준
 - deny: 특정 도구나 명령을 정적으로 막을 수 있는 규칙 (Claude Code `permissions.deny`)
@@ -17,8 +18,8 @@
 | `CONTRIBUTING.md:7` | 커밋 메시지 형식 | hook (`.githooks/commit-msg`) | 4, 8, 9 | 적용 | 적용 (setup이 `core.hooksPath` 설정) | 적용 (같음) |
 | `CONTRIBUTING.md:28` | Git 작업 전 규칙 확인 | hook (`commit-msg`) | 4, 8, 9 | 적용 | 적용 | 적용 |
 | `README.md:11`, `README.md:76` | 커밋 규칙 안내 문구 | hook (`commit-msg`), 문구 정리는 작업 6 | 6 | 적용 | 적용 | 적용 |
-| (우회 차단) | `--no-verify` 계열 | deny 6패턴 | 13 | 적용 | 해당 없음 | 해당 없음 |
-| `PERMISSIONS.md:45`, `PERMISSIONS.md:47` | 원격·파괴 명령은 매번 승인 | ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`) | 10 | 적용 | 현재 `prompt-required` 블록을 반영하지 않음 (기록만) | 변환 없음 |
+| (우회 차단) | `--no-verify` 계열 | deny 6패턴 (후속 이슈, 이 PR에서 제외) | 13 (취소) | 구현 없음 | 구현 없음 | 구현 없음 |
+| `PERMISSIONS.md:45`, `PERMISSIONS.md:47` | 원격·파괴 명령은 매번 승인 | ask 4항목 (`git push`, `gh pr merge`, `gh repo create`, `gh repo delete`) (후속 이슈, 이 PR에서 제외) | 10 (취소) | 구현 없음 | 현재 `prompt-required` 블록을 반영하지 않음 (기록만) | 변환 없음 |
 
 ## 파생하지 않는 항목과 이유
 - `git fetch`, `git pull`, `git clone`, `git remote`: Claude Code 기본 모드에서 이미 프롬프트 대상이고, 빈도가 높고 위험이 낮아 ask를 추가하면 마찰만 커진다. `PERMISSIONS.md`의 `prompt-required`에는 그대로 남긴다.
