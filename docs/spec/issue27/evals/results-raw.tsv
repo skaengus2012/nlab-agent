@@ -82,3 +82,9 @@ claude-sonnet-5-5	baseline	skill-description-style	3	False	False	'Run this skill
 claude-sonnet-5-5	after	skill-description-style	1	True	True	description이 'Use when...'으로 적용 시점을 평이하게 서술하며, 강압적인 트리거 문구를 사용하지 않습니다.
 claude-sonnet-5-5	after	skill-description-style	2	True	True	설명이 'Use when...' 형태로 적용 시점을 담백하게 밝히며, 'Make sure to trigger' 같은 강압적 트리거 표현을 쓰지 않습니다.
 claude-sonnet-5-5	after	skill-description-style	3	True	True	description이 'Use when...'으로 적용 시점을 담백하게 서술하며, 강압적인 트리거 문구를 사용하지 않습니다.
+claude-sonnet-5-5	after-head	review-no-fluff	1	True	True	칭찬이나 군더더기 없이 off-by-one 버그, 발생 조건, 수정 방법, 테스트 제안만 담은 순수 기술적 코멘트입니다.
+claude-sonnet-5-5	after-head	review-no-fluff	2	True	True	리뷰 코멘트는 문제점, 실패 조건, 수정 방법, 테스트 제안만 담은 기술적 내용이며 칭찬이나 군더더기가 없습니다.
+claude-sonnet-5-5	after-head	review-no-fluff	3	True	True	리뷰 코멘트는 문제점, 영향, 수정 방안만 담은 순수 기술적 내용이며 칭찬이나 군더더기가 없습니다.
+claude-sonnet-5-5	after-head	skill-description-style	1	True	True	description은 'Use when...'과 예시 요청으로 적용 시점을 담담하게 서술하며, 'Make sure to trigger' 같은 강압적 트리거 표현을 쓰지 않습니다.
+claude-sonnet-5-5	after-head	skill-description-style	2	True	True	설명이 'Use when...'과 'Triggers on requests like...'로 적용 시점을 담담하게 서술하며, 'Make sure to trigger' 같은 강압적 표현이 없습니다.
+claude-sonnet-5-5	after-head	skill-description-style	3	True	True	설명이 'Use when...'과 'Applies when...'으로 적용 시점을 담백하게 서술하며, 'Make sure to trigger'나 'even if they do not explicitly ask' 같은 강압적 트리거 표현이 없음.

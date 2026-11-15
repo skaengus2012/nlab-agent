@@ -2,6 +2,9 @@
 
 지시문 변경 전후로 에이전트 행동이 달라지는지 확인하는 평가다. 계획은 `docs/spec/issue27/plan.md`의 "행동 평가 설계"를 따른다.
 
+## 평가 입력
+`skills/<skill>/SKILL.md`만 입력이다(시나리오의 `skill` 필드). 다른 문서(`AGENTS.md`, `CONTRIBUTING.md`, `PERMISSIONS.md`, `README.md`)를 바꿔도 이 평가는 영향을 받지 않고, 평가하지도 않는다. 해당 skill의 SKILL.md가 바뀌면 그 skill의 시나리오를 다시 실행해야 한다. 도구는 hook이나 권한 설정과 무관하게 동작한다.
+
 ## 구성
 - `scenarios.json`: 시나리오와 통과 조건(정규식). 회귀 6개(`kind: regression`)와 의도 변화 검사 1개(`kind: intent`)
 - `run.sh`: `claude -p`를 시나리오마다 반복 실행한다. 끝난 실행은 건너뛰므로 재개할 수 있고, 총 비용이 `EVAL_CAP_USD`(기본 25)에 닿으면 중단한다

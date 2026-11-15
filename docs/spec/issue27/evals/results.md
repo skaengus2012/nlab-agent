@@ -3,6 +3,12 @@
 - 변경 후 지시문: 문구 조정 20곳(skills 13곳, 문서 7곳. 전수 목록으로는 21행인데 `NEVER`와 `INSTEAD`를 한 문장으로 합쳤기 때문)을 반영한 현재 `skills/` (작업 2, 6, 11)
 - 조건과 채점은 `baseline.md`와 같다. Sonnet은 `claude-opus-5-5` 블라인드 채점, Haiku는 정규식
 
+## 평가 대상과 재측정 (2026-11-15, PR #28 리뷰 반영)
+- 평가 입력은 `skills/`의 SKILL.md 5개(`systematic-debugging`, `receiving-code-review`, `create-gh-issue`, `requesting-code-review`, `writing-skills`)뿐이다. `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `PERMISSIONS.md`는 입력이 아니므로 이 문서들이 이후 크게 바뀐 것은 이 평가의 유효성과 무관하다(그 문서들의 조정은 평가하지 않았다).
+- 아래 표의 "변경 후" 실행은 커밋 `764c824` 시점의 SKILL.md로 했다. 이후 `de4b638`이 `requesting-code-review`(한 문장 추가)와 `writing-skills`(트리거 설명 한 줄)를 바꿨다. 그래서 해당 두 시나리오(`review-no-fluff`, `skill-description-style`)를 현재 문구로 Sonnet 3회씩 다시 실행하고 같은 Opus 블라인드 채점을 적용했다: 둘 다 **3/3**으로 기존과 같고 정규식 판정도 일치한다(`results-raw.tsv`의 `after-head` 행, 비용 약 0.14달러+채점 0.18달러). 나머지 5개 시나리오의 SKILL.md는 `764c824` 이후 바뀌지 않았다.
+- 이 재측정은 위 표를 바꾸지 않고, 표가 현재 문구에 대해서도 성립함을 확인한 것이다. 두 시나리오 모두 표본 3회이며 `review-no-fluff`는 비판별이므로 "회귀가 관측되지 않았다"는 같은 약한 근거다.
+- 앞으로 SKILL.md를 바꾸면 해당 skill의 시나리오(`scenarios.json`의 `skill` 필드)를 다시 실행해야 이 표가 유지된다.
+
 ## 비교 (Sonnet, Opus 채점, 통과/표본)
 
 | 시나리오 | 대조 | 기준선 | 변경 후 | 판정 |
