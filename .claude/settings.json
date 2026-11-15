@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git *--no-verify*)",
+      "Bash(git commit -n*)",
+      "Bash(git *core.hooksPath*)",
+      "Bash(git commit * -n *)",
+      "Bash(git commit * -n)"
+    ],
+    "ask": [
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(gh pr merge)",
+      "Bash(gh pr merge *)",
+      "Bash(gh repo create)",
+      "Bash(gh repo create *)",
+      "Bash(gh repo delete)",
+      "Bash(gh repo delete *)"
+    ]
+  }
+}

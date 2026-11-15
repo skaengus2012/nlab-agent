@@ -4,7 +4,7 @@ This repository follows a specific set of rules for development and maintenance.
 
 ## Commit Message Convention
 
-All commit messages must follow this strict format:
+All commit messages follow this format, and the `commit-msg` hook rejects other subjects:
 
 `Implement/Fix/Chore IssueNumber - Description`
 
@@ -22,8 +22,20 @@ All commit messages must follow this strict format:
 `Fix #5 - Correct typo in setup.sh path`
 `Chore N/A - Update README documentation`
 
+## Commit Message Hook
+The format above is enforced by `.githooks/commit-msg`. Subjects that start with `Merge `, `Revert `, `fixup!`, or `squash!` are exempt, and `#` comment lines and leading blank lines are ignored when finding the subject.
+
+When you change the hook, run `bash tests/commit-msg.test.sh` and make sure it exits with 0.
+
 ---
 
 ## AI Agent Instructions
-- **Rule Enforcement**: Always check this file before performing any Git operations.
+- **Rule Enforcement**: The `commit-msg` hook enforces the commit message format. Check this file for anything the hook does not cover.
 - **Local Priority**: These rules are local to the `nlab-agent` repository and take precedence over global defaults.
+
+## Enforcement Levels
+Rules are enforced at the strongest level available, and prose is used only where nothing else can enforce them:
+- **deny**: a command that can be statically blocked (Claude Code `permissions.deny`).
+- **ask**: a command that needs the user's approval every time (Claude Code `permissions.ask`).
+- **hook**: a rule that can be checked from its input, such as the commit message format.
+- **instruction**: a rule that cannot be enforced by the above. State the reason instead of adding emphasis.

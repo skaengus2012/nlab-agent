@@ -13,14 +13,14 @@ description: Use when receiving code review feedback. Ensures technical rigor an
 2. **ANALYZE & VERIFY**:
    - Use `grep` or `find` to check the current state of the code mentioned.
    - Identify if the suggestion conflicts with existing patterns or requirements.
-   - **Mandatory**: If the feedback is about a bug, reproduce it first.
+   - If the feedback is about a bug, reproduce it first so the fix is tested against the real failure.
 3. **EVALUATE**:
    - **Agree**: If the suggestion is technically superior and fits the context.
    - **Clarify**: If the intent is unclear.
    - **Push Back**: If the suggestion is technically incorrect, introduces debt, or violates project rules (e.g., YAGNI).
 4. **IMPLEMENT & VERIFY**:
    - **Commit** the fix for each comment separately.
-   - **Mandatory**: Run the `verification-before-completion` skill for every change.
+   - Run the `verification-before-completion` skill for every change.
 5. **RESPOND**: Reply to the thread using the templates below.
 
 ## Response Templates
@@ -67,8 +67,7 @@ Before clicking "Reply", ask yourself:
 > Verified with `npm test`.
 
 ## Handling Feedback
-- **NEVER** use performative agreement like "You're absolutely right!" or "Great point!".
-- **INSTEAD**: Just state the technical fix or push back with reasoning.
+- Reply with the technical fix or a reasoned pushback rather than agreement phrases such as "You're absolutely right!" or "Great point!". Those phrases give the reviewer no information.
 - **Push back when**:
   - Suggestion breaks existing functionality.
   - Reviewer lacks full context.
@@ -76,7 +75,7 @@ Before clicking "Reply", ask yourself:
   - Technically incorrect for this stack.
 
 ## Implementation Order
-1. Clarify anything unclear FIRST.
+1. Clarify anything unclear before implementing.
 2. Fix blocking issues (breaks, security).
 3. Simple fixes (typos, imports).
 4. Complex fixes (refactoring, logic).

@@ -33,7 +33,13 @@ git reset
 git cherry-pick
 git clean
 git config
-gh pr
+gh pr view
+gh pr list
+gh pr diff
+gh pr checks
+gh pr status
+gh pr create
+gh pr comment
 gh issue
 gh api
 gh repo view
@@ -42,9 +48,9 @@ gh auth status
 
 ---
 
-## 2. Interactive/Prompt-Required Commands (Must Ask Every Time)
+## 2. Interactive/Prompt-Required Commands (Ask Every Time)
 
-The following commands involve remote network operations or destructive mutations. To ensure complete security, the agent **must** ask for user approval on each execution, even if documented below.
+The following commands involve remote network operations or destructive mutations. They reach remote systems or are hard to undo, so the agent asks for user approval on each execution, even if documented below.
 
 ```permissions:prompt-required
 git fetch
@@ -55,4 +61,15 @@ git remote
 gh repo create
 gh repo delete
 gh pr merge
+```
+
+### Claude Code enforcement
+
+Claude Code does not read the blocks above. The subset below is derived into `permissions.ask` of this repository's `.claude/settings.json`, and `tests/permissions.test.sh` keeps the two in sync. The remaining commands (`git fetch`, `git pull`, `git clone`, `git remote`) already prompt in Claude Code's default mode, so they are not derived.
+
+```permissions:claude-ask
+git push
+gh pr merge
+gh repo create
+gh repo delete
 ```

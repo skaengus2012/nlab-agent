@@ -28,7 +28,7 @@ This skill ensures that all GitHub issues created within this repository follow 
    - Use Markdown for formatting.
    - **Problem**: Clearly define the issue or the current gap.
    - **Needs**: List what is required to solve the problem or the desired outcome.
-   - **Formatting**: Do NOT use `\n` literal strings in the command. Instead, use a multi-line string or save the body to a temporary file and use the `--body-file` flag for reliable formatting.
+   - **Formatting**: Avoid `\n` literal strings in the command because they render as unreadable text. Use a multi-line string, or save the body to a temporary file and use the `--body-file` flag.
 7. **Labels**: Always assign at least one relevant label. **Verify that the label exists** in the repository using `gh label list` before running the create command.
 8. **Project/Milestone**: (Optional) Assign to a project or milestone if applicable.
 

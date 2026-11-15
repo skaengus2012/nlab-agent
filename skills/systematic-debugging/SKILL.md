@@ -11,8 +11,8 @@ description: Use when investigating a bug - prevents "guess-and-check" by forcin
 ## The Process
 1. **Reproduce**: Create a reliable, minimal reproduction case (e.g., a failing test).
 2. **Observe**: Gather data (logs, traces, state) without making assumptions.
-3. **Hypothesize**: State exactly what you think is wrong and WHY.
-4. **Experiment**: Change ONE thing to test the hypothesis.
+3. **Hypothesize**: State exactly what you think is wrong and why.
+4. **Experiment**: Change one thing at a time so the result can be attributed to that change.
 5. **Verify**: Did the change have the expected effect?
 6. **Fix**: Implement the permanent solution once the cause is confirmed.
 

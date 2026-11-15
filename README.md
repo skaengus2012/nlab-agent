@@ -8,7 +8,7 @@ Multi-agent orchestration protocols and platform-agnostic AI skills designed for
 - `skills/`: Platform-agnostic AI skill definitions (Markdown with YAML frontmatter).
 - `platforms/`: Platform-specific setup scripts and configurations (`antigravity`, `claude`, `codex`).
 - `PERMISSIONS.md`: Tool execution permissions configuration for agent automation.
-- `CONTRIBUTING.md`: **Core development guidelines and commit conventions (MUST follow).**
+- `CONTRIBUTING.md`: Development guidelines and commit conventions, enforced by the `commit-msg` hook.
 
 ## Supported Platforms & Installation
 
@@ -73,8 +73,16 @@ Links skills globally (`~/.codex/skills/`) and creates `CODEX.md` in the target 
 
 ## Contributing
 
-Please review [CONTRIBUTING.md](CONTRIBUTING.md) before making changes. All commits must follow the repository convention:
+Please review [CONTRIBUTING.md](CONTRIBUTING.md) before making changes. Commit subjects use the repository convention, which the `commit-msg` hook checks:
 
 ```text
 Implement/Fix/Chore IssueNumber - Description
 ```
+
+The format is checked by the `commit-msg` hook in `.githooks/`. Running any `platforms/*/setup.sh` enables it for this repository by setting `core.hooksPath` to `.githooks`. If you did not run a setup script, enable it manually:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The setting is stored in the repository's shared git config, so every worktree of this repository uses it. A different `core.hooksPath` that already exists is left unchanged and the setup script prints a warning.

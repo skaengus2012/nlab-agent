@@ -63,6 +63,29 @@ link_project_instructions() {
     echo "✅ Linked AGENTS.md -> $abs_target_dir/CLAUDE.md"
 }
 
+# Enable the repository's commit-msg hook (CONTRIBUTING.md). Applies only to this repository.
+enable_commit_hook() {
+    local real_root top current
+    real_root="$(cd "$REPO_ROOT" && pwd -P)"
+    top="$(git -C "$REPO_ROOT" rev-parse --show-toplevel 2>/dev/null || true)"
+
+    # Skip when this is not the root of a git repository (e.g. a zip download or a nested checkout).
+    if [ -z "$top" ] || [ "$(cd "$top" && pwd -P)" != "$real_root" ]; then
+        echo "skip: $REPO_ROOT is not a git repository root, commit-msg hook not enabled"
+        return 0
+    fi
+
+    current="$(git -C "$REPO_ROOT" config --local --get core.hooksPath || true)"
+    if [ -n "$current" ] && [ "$current" != ".githooks" ]; then
+        echo "⚠️ Warning: core.hooksPath is already set to '$current'. Leaving it unchanged; commit-msg hook not enabled."
+        return 0
+    fi
+
+    [ -f "$REPO_ROOT/.githooks/commit-msg" ] && chmod +x "$REPO_ROOT/.githooks/commit-msg"
+    git -C "$REPO_ROOT" config core.hooksPath .githooks
+    echo "✅ Enabled commit-msg hook (core.hooksPath = .githooks)"
+}
+
 # Parse Arguments
 case "$1" in
     --global)
@@ -79,6 +102,8 @@ case "$1" in
         link_project_instructions "$2"
         ;;
 esac
+
+[ "${1:-}" = "--help" ] || enable_commit_hook
 
 echo ""
 echo "✨ Setup complete! Antigravity will now follow nlab-agent protocols."

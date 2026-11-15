@@ -9,7 +9,7 @@ description: Use when creating or updating Antigravity skills. Applies TDD princ
 **No skill without a failing test first.** Before writing a skill, observe how the agent fails without it.
 
 ## Designing Interactive Skills
-Any skill that requires multiple inputs from the user (e.g., creating issues, writing plans) must strictly adhere to the following dialog control principles:
+Any skill that requires multiple inputs from the user (e.g., creating issues, writing plans) must adhere to the following dialog control principles:
 1. **Single Query Rule**: Ask for exactly **one** pending field or clarification at a time. Do not request multiple inputs or combine optional prompts in a single turn.
 2. **Sequential Progress Tracking**: Keep track of the current collection state in your inner monologue (e.g., `[Field A: Done], [Field B: Pending]`) and only query the first pending item.
 3. **Smart Skip**: If the user proactively provides answers for multiple fields in a single message, mark all corresponding fields as completed and jump straight to the next pending field.
@@ -19,24 +19,25 @@ Any skill that requires multiple inputs from the user (e.g., creating issues, wr
 1. **RED (Baseline)**: Run a scenario without the skill (or using the snapshot of the old version). Document exactly where the agent fails, takes incorrect shortcuts, or rationalizes poor behavior.
 2. **GREEN (Minimal Skill)**: Write the minimal, clear instructions necessary to fix the observed failure.
 3. **VERIFY (Test & Benchmark)**: **Run the same scenario again with the new/modified skill enabled.** Compare the output qualitatively and quantitatively against the RED baseline. Ensure the failure is resolved and that the token/time overhead is justified.
-4. **REFACTOR (Close Loopholes)**: Identify any new bypasses or rationalizations observed during verification and add explicit counters (e.g., "No exceptions: Do not keep code as reference").
+4. **REFACTOR (Close Loopholes)**: Identify any new bypasses or rationalizations observed during verification and add the smallest instruction that closes each one, and state the reason it is needed.
 
 ## Progressive Disclosure & Architecture
 To keep the context clean and prevent token bloat, organize skills into a three-level loading hierarchy:
-1. **Metadata (Trigger)**: The YAML frontmatter containing `name` and `description`. Use a **Pushy Description** (e.g., explicitly direct the model to run the skill when specific keywords are mentioned to prevent undertriggering).
+1. **Metadata (Trigger)**: The YAML frontmatter containing `name` and `description`. Describe when the skill applies, naming the keywords and situations that should trigger it. If the skill undertriggers, measure triggering with a test instead of strengthening the wording.
 2. **SKILL.md Body (Core Guidelines)**: Keep the main markdown file under 500 lines. Focus on core workflows, rules, and example blocks.
 3. **Bundled Resources (Details)**: Delegate extensive documentation, huge code templates, or deterministic execution to subdirectories:
    - `references/`: Loaded dynamically as needed (e.g., `aws.md`, `gcp.md`).
    - `scripts/`: Python/Shell scripts for running repetitive tasks deterministically.
 
 ## Structure of a SKILL.md
-- **YAML Frontmatter**: Must include `name` and `description` (with pushy trigger words).
+- **YAML Frontmatter**: Must include `name` and `description` (naming the trigger keywords and situations).
 - **Overview**: Clear statement of the core principle.
 - **When to Use**: Specific triggers and symptoms.
 - **Red Flags**: List of common rationalizations to stop and start over.
 - **Example**: One high-quality, practical example.
 
-## Red Flags - STOP and Start Over
+## Red Flags
+If any of these appear, discard the draft and start over.
 - "It's too simple to need a skill."
 - "I'll just remember this next time."
 - "The spirit of the rule matters more than the ritual." (Spirit vs Letter)
