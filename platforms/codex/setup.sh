@@ -13,15 +13,29 @@ show_help() {
     echo "Usage: ./setup.sh [OPTION] [PROJECT_PATH]"
     echo ""
     echo "Options:"
-    echo "  --global        Link skills globally to Codex (~/.codex/skills)"
+    echo "  --global        Link skills globally to Codex (~/.codex/skills) and write ~/.codex/rules/nlab-agent.rules"
     echo "  --project       Link AGENTS.md as CODEX.md to a project (Default target: current dir)"
     echo "  --all           Perform both global and project setup (Default)"
     echo "  --help          Show this help message"
 }
 
+# Apply the PERMISSIONS.md blocks to Codex's user-level permission settings.
+# A failure here only skips the permissions; skills and instructions are still set up.
+apply_permissions() {
+    local target="${CODEX_HOME:-$HOME/.codex}/rules/nlab-agent.rules"
+    echo "Step 1.1: Applying PERMISSIONS.md to Codex ($target)..."
+    if ! command -v python3 >/dev/null 2>&1; then
+        echo "⚠️ Warning: python3 not found. Skipping permission configuration."
+        return 0
+    fi
+    python3 "$REPO_ROOT/platforms/lib/permissions.py" codex "$target" "$REPO_ROOT/PERMISSIONS.md" \
+        || echo "⚠️ Warning: permissions were not applied (see the message above). Skills and instructions are not affected."
+}
+
 link_global_skills() {
     if [ -f "$PLATFORM_DIR/link_skills.sh" ]; then
         bash "$PLATFORM_DIR/link_skills.sh"
+        apply_permissions
     else
         echo "❌ Error: link_skills.sh not found at $PLATFORM_DIR"
         exit 1

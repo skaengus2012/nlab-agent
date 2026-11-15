@@ -2,7 +2,17 @@
 
 This file defines the global command permission grants allowed in the developer agent environments (such as Antigravity, Claude Code, Cursor, etc.) during the development and automation of the `nlab-agent` repository.
 
-Platform-specific setup scripts parse this file and apply configurations to their respective local settings.
+Each platform setup script reads the `auto-allow` and `prompt-required` blocks below and applies them to that platform's user-level permission settings. The settings therefore reach every project the agent works in, not only this repository.
+
+| Platform | Written by | Destination | `auto-allow` | `prompt-required` |
+|---|---|---|---|---|
+| Antigravity | `platforms/antigravity/setup.sh` | `~/.gemini/config/config.json` | `globalPermissionGrants.allow` | not applied (commands outside `auto-allow` prompt by default) |
+| Claude Code | `platforms/claude/setup.sh` | `~/.claude/settings.json` | `permissions.allow` | `permissions.ask` |
+| Codex | `platforms/codex/setup.sh` | `~/.codex/rules/nlab-agent.rules` | `prefix_rule(..., decision="allow")` | `prefix_rule(..., decision="prompt")` |
+
+Setup only adds entries to an existing Claude Code or Antigravity settings file and never removes what you or an earlier run put there. The Codex rules file belongs to nlab-agent and is rewritten on every run. When both blocks match a command, the decision that asks for approval wins in Claude Code (`ask` over `allow`) and in Codex (`prompt` over `allow`).
+
+Codex's `allow` means "run outside the sandbox without prompting", which is stronger than Claude Code's `allow` (skip the prompt, keep the sandbox settings). Review the `auto-allow` list with that in mind.
 
 ---
 
@@ -33,6 +43,10 @@ git reset
 git cherry-pick
 git clean
 git config
+git fetch
+git pull
+git clone
+git remote
 gh pr view
 gh pr list
 gh pr diff
