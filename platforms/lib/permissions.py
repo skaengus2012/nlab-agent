@@ -2,8 +2,9 @@
 """Apply the blocks of PERMISSIONS.md to a platform's user-level permission settings.
 
 Usage:
-    permissions.py claude <settings.json> <PERMISSIONS.md>
-    permissions.py codex  <rules-file>    <PERMISSIONS.md>
+    permissions.py claude      <settings.json> <PERMISSIONS.md>
+    permissions.py codex       <rules-file>    <PERMISSIONS.md>
+    permissions.py antigravity <config.json>   <PERMISSIONS.md>
 
 claude  Merges `auto-allow` into permissions.allow and `prompt-required` into permissions.ask.
         Existing keys and rules are kept and nothing is removed. Every command is written twice,
@@ -11,6 +12,10 @@ claude  Merges `auto-allow` into permissions.allow and `prompt-required` into pe
         without arguments. A file that is not valid JSON is left untouched and reported.
 codex   Rewrites a rules file owned by nlab-agent with one prefix_rule per command
         (`allow` for auto-allow, `prompt` for prompt-required).
+antigravity
+        Merges `auto-allow` into userSettings.globalPermissionGrants.allow as `command(cmd)`.
+        Same merge rules and invalid-file handling as claude. Antigravity has no `ask` list
+        here, so `prompt-required` is not written.
 """
 import json
 import os
@@ -53,33 +58,60 @@ def claude_rules(commands):
     return rules
 
 
+def load_json_object(path):
+    """The parsed file, or {} when it does not exist. Anything else that is not a JSON object is an error."""
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except ValueError as e:
+        raise ValueError(f"{path} is not valid JSON ({e}); left unchanged")
+    if not isinstance(data, dict):
+        raise ValueError(f"{path} is not a JSON object; left unchanged")
+    return data
+
+
+def child(parent, key, kind, path, label):
+    value = parent.setdefault(key, kind())
+    if not isinstance(value, kind):
+        raise ValueError(f"{path}: {label} is not {'an object' if kind is dict else 'a list'}; left unchanged")
+    return value
+
+
+def merge(current, rules):
+    """Append the rules that are missing, keeping the order; returns how many were added."""
+    added = 0
+    for rule in rules:
+        if rule not in current:
+            current.append(rule)
+            added += 1
+    return added
+
+
+def save_json(path, data):
+    write_atomic(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+
+
 def apply_claude(settings_path, blocks):
-    settings = {}
-    if os.path.exists(settings_path):
-        try:
-            with open(settings_path, encoding="utf-8") as f:
-                settings = json.load(f)
-        except ValueError as e:
-            raise ValueError(f"{settings_path} is not valid JSON ({e}); left unchanged")
-        if not isinstance(settings, dict):
-            raise ValueError(f"{settings_path} is not a JSON object; left unchanged")
-
-    perms = settings.setdefault("permissions", {})
-    if not isinstance(perms, dict):
-        raise ValueError(f"{settings_path}: permissions is not an object; left unchanged")
-
+    settings = load_json_object(settings_path)
+    perms = child(settings, "permissions", dict, settings_path, "permissions")
     added = 0
     for key, block in (("allow", "auto-allow"), ("ask", "prompt-required")):
-        current = perms.setdefault(key, [])
-        if not isinstance(current, list):
-            raise ValueError(f"{settings_path}: permissions.{key} is not a list; left unchanged")
-        for rule in claude_rules(blocks[block]):
-            if rule not in current:
-                current.append(rule)
-                added += 1
-
-    write_atomic(settings_path, json.dumps(settings, indent=2, ensure_ascii=False) + "\n")
+        current = child(perms, key, list, settings_path, f"permissions.{key}")
+        added += merge(current, claude_rules(blocks[block]))
+    save_json(settings_path, settings)
     print(f"Claude Code: {settings_path} (added {added} rules)")
+
+
+def apply_antigravity(config_path, blocks):
+    config = load_json_object(config_path)
+    user = child(config, "userSettings", dict, config_path, "userSettings")
+    grants = child(user, "globalPermissionGrants", dict, config_path, "userSettings.globalPermissionGrants")
+    allow = child(grants, "allow", list, config_path, "userSettings.globalPermissionGrants.allow")
+    added = merge(allow, [f"command({cmd})" for cmd in blocks["auto-allow"]])
+    save_json(config_path, config)
+    print(f"Antigravity: {config_path} (added {added} rules)")
 
 
 def apply_codex(rules_path, blocks):
@@ -96,14 +128,17 @@ def apply_codex(rules_path, blocks):
     print(f"Codex: {rules_path}")
 
 
+APPLY = {"claude": apply_claude, "codex": apply_codex, "antigravity": apply_antigravity}
+
+
 def main(argv):
-    if len(argv) != 4 or argv[1] not in ("claude", "codex"):
+    if len(argv) != 4 or argv[1] not in APPLY:
         print(__doc__, file=sys.stderr)
         return 2
     platform, target, permissions_md = argv[1:]
     try:
         blocks = read_blocks(permissions_md)
-        (apply_claude if platform == "claude" else apply_codex)(target, blocks)
+        APPLY[platform](target, blocks)
     except (OSError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1

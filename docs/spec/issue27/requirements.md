@@ -54,7 +54,7 @@
   - `skills/create-gh-issue-analysis-report/SKILL.md` (13건), `skills/create-plans/SKILL.md` (12건), `AGENTS.md` (6건), `skills/create-gh-issue/SKILL.md` (5건), `skills/writing-skills/SKILL.md` (4건)
   - 그 외 `CONTRIBUTING.md`, `README.md`, `PERMISSIONS.md`, `brainstorming`, `requesting-code-review`, `receiving-code-review`, `systematic-debugging`, `skillify`
 - 여러 skill에 `Red Flags` 섹션이 있다: `systematic-debugging`, `create-plans`, `writing-skills`, `create-gh-issue`, `verification-before-completion`, `create-gh-issue-analysis-report`.
-- 저장소에 hook 관련 설정이나 문서는 현재 없다. `platforms/`에는 플랫폼별 `setup.sh`, `link_skills.sh`와 antigravity의 `configure_permissions.py`가 있다.
+- 저장소에 hook 관련 설정이나 문서는 현재 없다. `platforms/`에는 플랫폼별 `setup.sh`, `link_skills.sh`가 있고, 기준 상태에서는 antigravity에만 `configure_permissions.py`가 있었다(PR #28 리뷰 반영으로 `platforms/lib/permissions.py`에 합쳐 삭제).
 - `PERMISSIONS.md`는 명령어 권한 허용 목록을 정의하며, 플랫폼 setup 스크립트가 이를 파싱한다.
 
 ## 미결 사항
@@ -72,3 +72,4 @@
 |------|-----------|------|
 | 2026-11-15 | 최초 작성 | 본문 |
 | 2026-11-15 | 범위 확정: 이 저장소가 다른 프로젝트에 설정을 배포하는 원본이라는 점을 반영해 FR-4(setup이 `PERMISSIONS.md`를 Claude Code·Codex 사용자 수준 설정으로 적용), FR-5(`prompt-required` 한정과 `git fetch`·`pull`·`clone`·`remote`의 `auto-allow` 이동)를 추가하고 인수 조건을 보강. 미결 사항 중 다음을 결정하고 목록에서 제거: 검토 범위(`AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `PERMISSIONS.md`, `skills/`, `platforms/`), 불필요한 강조의 판단 기준(대문자·절대 표현만 대상이 아니라 `Red Flags` 등 경고 문구도 전수 판정, `emphasis-inventory.md`), 조정 방식(이유를 설명하는 문장으로 교체), 절대 금지 목록(`prompt-required` 4개), hook 대상 플랫폼과 위치(git hook 미채택, setup이 배포하는 권한 규칙으로 대체), 서술형 규칙의 처리(지시문에 이유를 적음), 산출물 범위(문구 조정과 권한 배포 구현, 행동 평가 포함). 새 미결 사항으로 `auto-allow` 범위 검토를 추가 | 사용자 요청 |
+| 2026-11-15 | PR #28 리뷰 반영: Antigravity도 Claude Code·Codex와 같은 `platforms/lib/permissions.py`·`apply_permissions`를 쓰도록 하고 `configure_permissions.py`를 삭제. 영향 서술(Impact)만 고쳤고 요구사항은 바뀌지 않음 | 리뷰 코멘트 |

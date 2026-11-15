@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Sourced by platforms/{claude,codex}/setup.sh. Expects REPO_ROOT to be set by the caller.
+# Sourced by platforms/{antigravity,claude,codex}/setup.sh. Expects REPO_ROOT to be set by the caller.
 
 # Apply the PERMISSIONS.md blocks to a platform's user-level permission settings.
-# Usage: apply_permissions <label> <claude|codex> <target-file>
+# Usage: apply_permissions <label> <claude|codex|antigravity> <target-file>
 # A failure here only skips the permissions; skills and instructions are still set up.
 apply_permissions() {
     local label="$1" kind="$2" target="$3"

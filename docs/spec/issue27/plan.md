@@ -122,6 +122,8 @@
     - **Verify**: 두 시험의 출력과 시험 파일이 지워졌음(`ls ~/.codex/rules`)이 `prohibitions.md`에 기록되어 있다.
 22. `emphasis-inventory.md`·`prohibitions.md`·PR 본문을 새 범위(FR-4·FR-5)에 맞춰 갱신하고 `Refs #27`을 `Closes #27`로 바꾼다.
     - **Verify**: 본문에 `hook`·`.claude/settings.json`이 "제외"로만 남아 있고 새 범위가 설명되어 있다.
+23. Antigravity도 공통 코드를 쓰게 한다. `platforms/lib/permissions.py`에 `antigravity` 종류(`globalPermissionGrants.allow`에 `command(...)` 병합, 기존 설정 보존, 잘못된 JSON은 수정하지 않고 오류)를 추가하고 `platforms/antigravity/setup.sh`가 `apply_permissions`를 호출하게 하며 `configure_permissions.py`를 삭제한다.
+    - **Verify**: `bash tests/permissions-apply.test.sh` 가 통과하고(Antigravity 13건 추가), `grep -rn configure_permissions platforms` 결과가 없다.
 
 ## 검증
 - 최종 grep: `diff <(grep -rE "\b(MUST|NEVER|STOP|NOT|ONE|WHY|FIRST|INSTEAD)\b|Mandatory|strict" AGENTS.md README.md CONTRIBUTING.md PERMISSIONS.md skills | sort) <(sort docs/spec/issue27/emphasis-keep.txt)` 가 빈 출력이다.
@@ -166,3 +168,4 @@
 | 2026-11-15 | 작업 17~22 수행. `platforms/lib/permissions.py`(블록 파서 한 곳, `claude`·`codex` 변환)를 `tests/permissions-apply.test.sh`(32건)를 먼저 작성해 RED 22건 확인 후 구현, 두 setup의 `--global` 경로에 연결(실패해도 skills·지침 설정은 계속). `PERMISSIONS.md`를 개정(소개·변환표, `git fetch`·`pull`·`clone`·`remote`를 `auto-allow`로 이동), `README.md`에 setup이 사용자 수준 설정을 바꾼다는 점과 되돌리는 법을 추가. 실제 검증: Claude Code는 생성된 설정으로 `git fetch`가 승인 없이 실행되고 `git push`가 거부됨(`ask`와 기본 거부는 구분 불가), Codex는 `~/.codex/rules/`의 시험 규칙이 로드되어 `forbidden` 명령이 거부됨(시험 파일은 즉시 삭제). 강조 문구 grep은 `restrictive` 안의 `strict`에 걸려 문장을 바꿈 | 작업 수행 |
 | 2026-11-15 | PR #28 리뷰 반영: 두 setup에 같은 모양으로 복사돼 있던 `apply_permissions`를 `platforms/lib/apply_permissions.sh`로 추출하고 라벨·종류·대상 경로를 인자로 받게 함. `tests/permissions-apply.test.sh` 32건이 전후 동일하게 통과. 작업 19 서술 갱신 | 리뷰 코멘트 |
 | 2026-11-15 | PR #28 리뷰 반영: 행동 평가가 지금도 유효한지 확인. 입력은 SKILL.md 5개뿐이고 `764c824` 이후 `de4b638`이 `requesting-code-review`·`writing-skills`를 바꿨으므로 두 시나리오만 현재 문구로 Sonnet 3회씩 재실행하고 Opus 채점해 둘 다 3/3(기존과 같음)을 확인. `results.md`에 평가 대상과 재측정, `evals/README.md`에 평가 입력을 기록하고 `results-raw.tsv`에 `after-head` 행을 추가 | 리뷰 코멘트 |
+| 2026-11-15 | PR #28 리뷰 반영: Antigravity만 기존 `configure_permissions.py`를 쓰고 있어 Claude·Codex와 달랐음. 작업 23으로 공통 도구에 합쳐 삭제. 동작 차이 두 가지: 잘못된 JSON이면 기존에는 설정을 새로 초기화(내용 유실)했으나 이제 수정하지 않고 경고, 실패해도 setup은 계속됨 | 리뷰 코멘트 |

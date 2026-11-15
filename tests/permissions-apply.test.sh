@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tests platforms/lib/permissions.py and its use by platforms/{claude,codex}/setup.sh.
+# Tests platforms/lib/permissions.py and its use by platforms/{antigravity,claude,codex}/setup.sh.
 # Uses temporary directories only; the real ~/.claude and ~/.codex are never touched.
 # Usage: bash tests/permissions-apply.test.sh
 set -u
@@ -117,6 +117,40 @@ HOME="$d/home" CLAUDE_HOME="$d/claude" bash "$REPO_ROOT/platforms/claude/setup.s
 [ "$?" = "0" ] && ok || bad "setup claude failed on a broken settings.json"
 check "setup claude: no warning for a broken settings.json" grep -qi "warning" "$d/out.txt"
 check "setup claude: skills were not linked after a broken settings.json" test -e "$d/claude/skills/create-plans"
+
+# 11. antigravity: auto-allow goes to globalPermissionGrants.allow as command(...), nothing else is touched
+S="$TMP/agy/config.json"; mkdir -p "$(dirname "$S")"
+cat > "$S" <<'EOF'
+{
+  "userSettings": {
+    "theme": "dark",
+    "globalPermissionGrants": {"allow": ["command(npm test)"], "deny": ["command(rm -rf /)"]}
+  },
+  "other": 1
+}
+EOF
+python3 "$TOOL" antigravity "$S" "$TMP/PERMISSIONS.md" >/dev/null 2>&1
+check "antigravity: auto-allow rules were not added" json_has "$S" "{'command(git status)','command(gh pr view)'} <= set(d['userSettings']['globalPermissionGrants']['allow'])"
+check "antigravity: prompt-required was granted" json_has "$S" "not any('push' in r or 'merge' in r for r in d['userSettings']['globalPermissionGrants']['allow'])"
+check "antigravity: existing settings were lost" json_has "$S" "d['other']==1 and d['userSettings']['theme']=='dark' and 'command(npm test)' in d['userSettings']['globalPermissionGrants']['allow'] and d['userSettings']['globalPermissionGrants']['deny']==['command(rm -rf /)']"
+cp "$S" "$TMP/agy.before"; python3 "$TOOL" antigravity "$S" "$TMP/PERMISSIONS.md" >/dev/null 2>&1
+check "antigravity: second run changed the file" cmp -s "$S" "$TMP/agy.before"
+
+# 12. antigravity: an invalid file is left untouched and reported (the old script reinitialized it)
+S="$TMP/agy-broken/config.json"; mkdir -p "$(dirname "$S")"; printf '{ nope\n' > "$S"; cp "$S" "$TMP/agy-broken.before"
+python3 "$TOOL" antigravity "$S" "$TMP/PERMISSIONS.md" >/dev/null 2>&1; rc=$?
+[ "$rc" -ne 0 ] && ok || bad "antigravity: invalid JSON exited 0"
+check "antigravity: invalid JSON was modified" cmp -s "$S" "$TMP/agy-broken.before"
+
+# 13. antigravity setup applies the rules under a redirected home and still finishes on a broken file
+d="$TMP/setup-agy"; mkdir -p "$d/home"
+HOME="$d/home" bash "$REPO_ROOT/platforms/antigravity/setup.sh" --global >"$d/out.txt" 2>&1
+[ "$?" = "0" ] && ok || bad "antigravity setup exited non-zero"
+check "setup antigravity: config.json was not written" json_has "$d/home/.gemini/config/config.json" "'command(git fetch)' in d['userSettings']['globalPermissionGrants']['allow']"
+d="$TMP/setup-agy-broken"; mkdir -p "$d/home/.gemini/config"; printf '{ nope\n' > "$d/home/.gemini/config/config.json"
+HOME="$d/home" bash "$REPO_ROOT/platforms/antigravity/setup.sh" --global >"$d/out.txt" 2>&1
+[ "$?" = "0" ] && ok || bad "antigravity setup failed on a broken config.json"
+check "setup antigravity: no warning for a broken config.json" grep -qi "warning" "$d/out.txt"
 
 echo "passed: $pass, failed: $fail"
 [ "$fail" -eq 0 ]

@@ -9,9 +9,8 @@ REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PLATFORM_DIR="$REPO_ROOT/platforms/antigravity"
 AGENTS_MD="$REPO_ROOT/AGENTS.md"
 
-# Antigravity Global Path
-CONFIG_JSON="$HOME/.gemini/config/config.json"
-PERMISSIONS_MD="$REPO_ROOT/PERMISSIONS.md"
+# shared with the other platforms: apply_permissions <label> <kind> <target-file>
+source "$REPO_ROOT/platforms/lib/apply_permissions.sh"
 
 show_help() {
     echo "Usage: ./setup.sh [OPTION] [PROJECT_PATH]"
@@ -32,18 +31,8 @@ link_global_skills() {
         exit 1
     fi
 
-    # 2. Run permission configuration script
-    echo "Step 1.1: Configuring global permissions from PERMISSIONS.md..."
-    if command -v python3 >/dev/null 2>&1; then
-        if [ -f "$PLATFORM_DIR/configure_permissions.py" ]; then
-            python3 "$PLATFORM_DIR/configure_permissions.py" "$CONFIG_JSON" "$PERMISSIONS_MD"
-        else
-            echo "❌ Error: configure_permissions.py not found at $PLATFORM_DIR"
-            exit 1
-        fi
-    else
-        echo "⚠️ Warning: python3 not found. Skipping global permission configuration."
-    fi
+    # 2. Apply PERMISSIONS.md to the Antigravity global settings
+    apply_permissions "Antigravity" antigravity "$HOME/.gemini/config/config.json"
 }
 
 link_project_instructions() {
