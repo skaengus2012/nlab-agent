@@ -1,6 +1,6 @@
 ---
 name: enter-worktree-on-claude-desktop
-description: Claude desktop app ONLY. Use when the user wants to move the session into an EXISTING git worktree (e.g. "워크트리로 이동해줘", "워크트리 들어가줘", "/enter-worktree-on-claude-desktop"). Lists worktrees newest-first, lets the user pick one, and switches the session's working directory to it with the desktop app's `change_directory` tool. Does nothing outside the Claude desktop app.
+description: Claude desktop app ONLY. Use when the user wants to move the session into an EXISTING git worktree (e.g. "워크트리로 이동해줘", "워크트리 들어가줘", "/enter-worktree-on-claude-desktop"). Lists the worktrees, lets the user pick one, and switches the session's working directory to it with the desktop app's `change_directory` tool. Does nothing outside the Claude desktop app.
 ---
 
 # Enter Worktree (Claude desktop app only)
@@ -15,21 +15,18 @@ If the tool cannot be found, **stop here**: tell the user this skill works only 
 
 ## Steps
 
-1. **List worktrees sorted by creation time (newest first)**. Git does not store creation time, so use the birth time of each worktree's admin dir `<git-common-dir>/worktrees/<id>`:
+1. **List worktrees** in the order `git worktree list --porcelain` gives (the main checkout first). Print one `path<TAB>branch` line per worktree, skipping prunable (already deleted) and bare entries, and labelling a detached HEAD `(detached)`:
    ```bash
-   common=$(git rev-parse --path-format=absolute --git-common-dir)
-   for d in "$common"/worktrees/*/; do
-     p=$(sed 's#/\.git$##' "$d/gitdir")
-     b=$(git -C "$p" branch --show-current 2>/dev/null)
-     t=$(stat -f %B "$d")
-     echo "$t $p [$b]"
-   done | sort -rn
+   git worktree list --porcelain | awk '
+     /^worktree /{ if (p != "" && !skip) print p "\t" b; p = substr($0, 10); b = "(detached)"; skip = 0; next }
+     /^branch /{ b = $2; sub("refs/heads/", "", b) }
+     /^(prunable|bare)/{ skip = 1 }
+     END { if (p != "" && !skip) print p "\t" b }'
    ```
-   The main checkout is not in this list; include it (from `git worktree list | head -1`) as the last entry.
 2. **Ask the user to pick** with `AskUserQuestion`:
-   - Options: the **2 newest** worktrees (label: branch name, description: path), plus **"전체 목록 보기"**.
-   - "전체 목록 보기": print the whole sorted list (number, branch, path), then ask the user which one (they can answer by number or name).
-   - If there are no worktrees, say so and stop.
+   - Label: the branch name, or the directory name for `(detached)`. Description: the path.
+   - Up to 4 entries: make each an option. More than 4: the first 3 plus **"전체 목록 보기"**, which prints the whole list (number, branch, path) and asks which one (by number or name).
+   - If the list is empty, say so and stop.
 3. **Switch the working directory**: call `change_directory` with the absolute path. Prefer it over `EnterWorktree`, which only tracks worktrees it created and is undone by `ExitWorktree`.
 4. **Confirm in one line**: path and branch.
 
