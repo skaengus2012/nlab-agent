@@ -41,6 +41,8 @@ Links skills globally (`~/.claude/skills/`), applies the permission rules of `PE
 ./platforms/claude/setup.sh --project /path/to/project
 ```
 
+Skills under `platforms/claude/skills/` are Claude-only (e.g. `enter-worktree-on-claude-desktop`, which needs the Claude desktop app). They are linked only by this setup; other AI agents do not use them.
+
 ### 💻 OpenAI Codex
 
 Links skills globally (`~/.codex/skills/`), writes the permission rules of `PERMISSIONS.md` to `~/.codex/rules/nlab-agent.rules`, and creates `CODEX.md` in the target project:

@@ -55,6 +55,7 @@ nlab-agent supports multiple AI agent environments. Use the setup scripts in `pl
 ### 🤖 Claude Code
 - **Setup**: `./platforms/claude/setup.sh`
 - **Focus**: Project-level protocol recognition via `CLAUDE.md`.
+- **Claude-only skills**: `platforms/claude/skills/` holds skills that need Claude-specific tools (e.g. `enter-worktree-on-claude-desktop`). Only this setup links them; other AI agents do not use them.
 
 ### 💻 OpenAI Codex
 - **Setup**: `./platforms/codex/setup.sh`
