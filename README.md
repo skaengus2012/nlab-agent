@@ -73,7 +73,6 @@ The global step of each setup script applies the `auto-allow` and `prompt-requir
 | **📝 PM & Planning** | `create-plans`, `brainstorming`, `create-gh-issue`, `create-gh-issue-analysis-report` | Task planning, architecture exploration, issue creation, and requirements analysis reports from GitHub issues. |
 | **🛠 Engineering & Debugging** | `systematic-debugging`, `test-driven-development` | Hypothesis-driven root-cause debugging and TDD cycles. |
 | **🛡 Quality & Workflow** | `requesting-code-review`, `receiving-code-review`, `verification-before-completion` | Evidence-based code reviews and pre-completion verification. |
-| **🧠 Knowledge & Meta** | `writing-skills`, `skillify` | Creating, updating, and extracting reusable skills. |
 
 ## Adding New Skills
 
