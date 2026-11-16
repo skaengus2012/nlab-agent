@@ -33,8 +33,6 @@ Links skills globally (`~/.gemini/antigravity/skills/`), configures permissions,
 
 Links skills globally (`~/.claude/skills/`), applies the permission rules of `PERMISSIONS.md` to `~/.claude/settings.json`, and links `AGENTS.md` as `CLAUDE.md` to establish project protocols for Claude Code:
 
-Skills under `platforms/claude/skills/` are Claude-only (e.g. `enter-worktree-on-claude-desktop`, which needs the Claude desktop app). They are linked only by this setup; other AI agents do not use them.
-
 ```bash
 # Link to current repository root (default)
 ./platforms/claude/setup.sh
@@ -42,6 +40,8 @@ Skills under `platforms/claude/skills/` are Claude-only (e.g. `enter-worktree-on
 # Or link to a specific project directory
 ./platforms/claude/setup.sh --project /path/to/project
 ```
+
+Skills under `platforms/claude/skills/` are Claude-only (e.g. `enter-worktree-on-claude-desktop`, which needs the Claude desktop app). They are linked only by this setup; other AI agents do not use them.
 
 ### 💻 OpenAI Codex
 
