@@ -40,9 +40,6 @@ The following is a high-level map of available skill categories. Check the `skil
 
 ### 🛡 Quality & Workflow
 - `requesting-code-review`, `receiving-code-review`, `verification-before-completion`
-
-### 🧠 Knowledge & Meta
-- `writing-skills`, `skillify`
 </skills>
 
 <platforms>
