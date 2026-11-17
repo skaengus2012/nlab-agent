@@ -30,6 +30,8 @@ No design change is planned. The work is an audit plus evidence.
 2. Fix each found item with a POSIX-common form (skip if Task 1 found none).
    - **Verify**: `bash tests/permissions-apply.test.sh` passes on macOS; re-run the Task 1 patterns and get no hits.
 ~~3. Run `tests/permissions-apply.test.sh` on Linux.~~ (Dropped: static verification on macOS is enough for now; no container runtime is available here.)
+5. Change the six `platforms/*/{setup,link_skills}.sh` shebangs from `#!/bin/bash` to `#!/usr/bin/env bash` (user decision; adds no OS branching).
+   - **Verify**: `head -n1` of every script shows `#!/usr/bin/env bash`; `bash tests/permissions-apply.test.sh` has 0 failures; each `setup.sh --global` runs directly (via its shebang) against temporary directories and exits 0.
 4. Update `requirements.md` (Impact, Acceptance Criteria checkboxes, Change History) with the audit result.
    - **Verify**: the checkboxes match the evidence from Tasks 1 and 2.
 
@@ -45,3 +47,4 @@ No design change is planned. The work is an audit plus evidence.
 |------|--------|--------|
 | 2026-11-17 | Initial draft | requirements.md |
 | 2026-11-17 | Task 3 (Linux run) dropped; verification narrowed to the static audit and a macOS test run. | User decision in chat |
+| 2026-11-17 | Task 5 added: unify shebangs to `#!/usr/bin/env bash`. | User decision in chat |

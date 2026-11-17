@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # nlab-agent Setup Script for Claude (Claude Code)
 # This script links nlab-agent skills globally and project-specific instructions locally.

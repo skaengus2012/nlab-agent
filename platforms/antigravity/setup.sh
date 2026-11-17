@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # nlab-agent Setup Script for Antigravity
 # This script orchestrates linking skills globally and instructions locally.
 

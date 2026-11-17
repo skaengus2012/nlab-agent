@@ -42,9 +42,9 @@ The repository's scripts must not be macOS-only. Find macOS-specific code in the
 | ~~NFR-3~~ | (Dropped: native Windows is out of scope, so the symlink privilege question no longer applies.) | User decision in chat (2026-11-17) |
 
 ## Acceptance Criteria
-- [ ] Every sh and Python script under `platforms/`, `skills/`, and `tests/` has been audited, and the result list exists (an explicit "0 found" counts).
-- [ ] Every found item has been fixed to work on macOS and Linux.
-- [ ] `tests/permissions-apply.test.sh` passes fully on macOS. Linux execution is not required for now (static verification only).
+- [x] Every sh and Python script under `platforms/`, `skills/`, and `tests/` has been audited, and the result list exists (an explicit "0 found" counts).
+- [x] Every found item has been fixed to work on macOS and Linux. (Nothing was found, so no fix was needed.)
+- [x] `tests/permissions-apply.test.sh` passes fully on macOS. Linux execution is not required for now (static verification only).
 
 ## Impact
 Confirmed from the code (as of this analysis):
@@ -52,10 +52,11 @@ Confirmed from the code (as of this analysis):
 - `skills/` contains no sh or Python files.
 - A line-by-line read of the tracked sh/py files (including the out-of-scope `docs/spec/issue27/evals/` ones) found **no macOS-specific code**. No use of `sed -i ''`, the `open` command, `pbcopy`, `readlink -f`, `stat -f`, `date -j`, or `osascript`. The commands used (`ln -sf`/`ln -sfn`, `mktemp -d`, `pwd -P`, `sed -n`, `seq`, `cmp -s`, `grep -q`) behave the same on BSD and GNU. Python `open()` is the built-in, and `os.replace` and `tempfile` are OS-independent.
 - Minor note, not OS-related: `codex` and `antigravity` `link_skills.sh` use `ln -sf src dir/`, while `claude` uses `ln -sfn src dir/name`. Out of scope for this issue.
-- The result is therefore likely "audit complete, no fix needed", backed by the static audit and the macOS test run.
+- Audit result (2026-11-17, re-run on this branch over the 9 tracked sh/py files in `platforms/` and `tests/`; `skills/` has none): **0 macOS-specific items found; no code change needed.** Evidence: pattern grep (`sed -i`, `open`, `pbcopy`/`pbpaste`, `readlink -f`, `stat -f`, `date -j`/`-v`, `osascript`, `brew`, `/Users/`, `grep -P`, `declare -A`, `mapfile`/`readarray`, `xargs`, `find`, `realpath`, `echo -e`, and similar) found nothing macOS-specific; `bash -n` and `py_compile` pass on every file; and `bash tests/permissions-apply.test.sh` ran under macOS's own bash 3.2.57 with `passed: 42, failed: 0`, so no bash 4+ features are used.
+- Portability change (not macOS-specific, made at the user's request): the six `platforms/*/{setup,link_skills}.sh` scripts used `#!/bin/bash`; they now use `#!/usr/bin/env bash`, matching `apply_permissions.sh` and the test. This also covers systems without `/bin/bash` (for example NixOS). It adds no OS branching. Verified with the test (42 passed, 0 failed) and by running the three `setup.sh` scripts directly through their shebang against temporary directories (exit 0). Also, `codex` and `antigravity` `link_skills.sh` use `ln -sf src dir/`, while `claude` uses `ln -sfn src dir/name`.
 
 ## Open Questions
-- Where should the found-code list live: the Impact section of this report or the PR description? (Proposed: Impact section and/or PR description; no separate document, since the result is small.)
+- None.
 
 ## Conflicts and Notes
 No comments exist on the issue, so there is no conflict between the body and comments. The user said that the real intent is only to avoid a macOS-only repository, so the earlier native-Windows, no-OS-branching, and whole-repo expansions were rolled back after an Opus review. The issue originates from a review comment on #30 (the review content itself was not read).
@@ -72,3 +73,5 @@ No comments exist on the issue, so there is no conflict between the body and com
 | 2026-11-17 | Audit scope expanded to other code in the repository (FR-4 added, scope and acceptance criteria updated); found `tests/` and `docs/spec/issue27/evals/` scripts missing from the earlier list. Replaced the scope question with a narrower one on what "other code" covers. | User decision in chat |
 | 2026-11-17 | Rolled back over-scoping after the user said the intent is only "not macOS-only" and delegated decisions to an Opus review: native Windows and NFR-3 dropped, NFR-2 softened, FR-4 dropped (`tests/` added to FR-1), `.DS_Store` question closed, verification set to a Linux container test run. Impact updated with the line-by-line audit result (0 macOS-specific code found). | User decision in chat; Opus review |
 | 2026-11-17 | Verification narrowed to the static code audit plus a macOS test run; the Linux container acceptance criterion was removed for now. | User decision in chat |
+| 2026-11-17 | Audit completed: 0 macOS-specific items found, macOS test run passed (42 passed, 0 failed under bash 3.2). Acceptance criteria checked; the found-code list is recorded in Impact. Replaced the list-location question with a shebang-consistency question. | Audit run on this branch |
+| 2026-11-17 | Unified the six `#!/bin/bash` shebangs to `#!/usr/bin/env bash` (no OS branching); closed the shebang question. | User decision in chat |
