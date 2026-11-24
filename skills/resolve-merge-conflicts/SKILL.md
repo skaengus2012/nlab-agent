@@ -88,7 +88,7 @@ Check that the merge actually started **before** reading the list. An empty list
 Conflicts such as binary files, modify/delete, rename/rename, submodules, file mode, and LFS pointers cannot be expressed as markers and cannot be left unmerged in a commit. `git status --short` shows them as `UD`, `DU`, `AU`, `UA`, `DD`, or `AA` on binary files. For each one:
 1. Explain the situation and the options.
 2. Ask the user which side to keep (one question per file), naming sides as **target** or **source**.
-3. Apply the choice: `git add <file>` (keep what is in the tree), `git rm <file>` (delete), or `git checkout --ours|--theirs <file>` followed by `git add <file>` (`--ours` = target, `--theirs` = source). A conflicted submodule may need `git add <submodule>` after choosing the commit inside it; ask the user rather than guess.
+3. Apply the choice: `git add <file>` (keep what is in the tree), `git rm <file>` (delete), or `git checkout --ours|--theirs <file>` followed by `git add <file>` (`--ours` = target, `--theirs` = source). For a conflicted submodule (mode `160000` in `git ls-files -u <submodule>`), `git checkout --ours|--theirs` silently does nothing: take the chosen commit from `git ls-files -u <submodule>` (stage 2 = target, stage 3 = source), run `git -C <submodule> checkout <sha>`, then `git add <submodule>`, and if that commit is not available locally, ask the user rather than guess.
 4. Remember each decision; it goes into the commit message in step 6.
 
 After this step re-run `git diff --name-only --diff-filter=U`. That list is the **marker files** list; keep it, it is used in steps 6 to 9.
