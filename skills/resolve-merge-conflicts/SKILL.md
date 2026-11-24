@@ -64,9 +64,9 @@ Name pattern: `merge/<source-slug>-into-<target-slug>-<yyyyMMdd>T<HHmmss>Z`
   - **delete and recreate**: only after the user confirms by name; `git branch -D <existing>` fails if it is checked out here or in another worktree, in which case fall back to creating a new one.
   - **create new**.
 
-Create the branch **from the target ref without checking the target out**. The target may already be checked out in another worktree, which makes `git switch <target>` fail:
+Create the branch **from the target ref without checking the target out**. The target may already be checked out in another worktree, which makes `git switch <target>` fail. Pass `--no-track`: with a remote-tracking target such as `origin/main`, git otherwise sets it as the upstream, so a bare `git pull` merges new target commits into the work branch and, with `push.default=upstream`, a bare `git push` sends the work branch (including the broken-build marker commit) to the target branch on the remote:
 ```bash
-git switch -c "<name>" <target-ref>
+git switch -c "<name>" --no-track <target-ref>
 ```
 
 ### 4. Run the merge
