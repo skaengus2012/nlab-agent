@@ -39,7 +39,7 @@ The following is a high-level map of available skill categories. Check the `skil
 - `systematic-debugging`, `test-driven-development`
 
 ### 🛡 Quality & Workflow
-- `requesting-code-review`, `receiving-code-review`, `verification-before-completion`
+- `requesting-code-review`, `receiving-code-review`, `verification-before-completion`, `resolve-merge-conflicts`
 </skills>
 
 <platforms>
