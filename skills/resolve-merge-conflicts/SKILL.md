@@ -69,12 +69,15 @@ Disable `rerere` so every conflict is visible. Use the `zdiff3` conflict style s
 ```bash
 STYLE=zdiff3     # or diff3 on git < 2.35
 git -c rerere.enabled=false -c merge.conflictStyle=$STYLE merge --no-ff --no-commit <source-ref>
-git diff --name-only --diff-filter=U     # list of conflicted files
+test -f "$(git rev-parse --git-path MERGE_HEAD)"     # exit 0: the merge started
+git diff --name-only --diff-filter=U                 # list of conflicted files
 ```
-- **No conflicts** (the list is empty): `git commit --no-edit` the merge as is, report that no resolution was needed, and stop. Skip the rest.
+Check that the merge actually started **before** reading the list. An empty list does not mean "no conflicts" on its own: a merge that fails to start (for example `refusing to merge unrelated histories`, or an ignored file that would be overwritten) also leaves the list empty.
+- **The merge did not start** (`MERGE_HEAD` does not exist): show git's message, stop, `git switch <original branch>` (or the recorded SHA), and offer to delete the work branch. `git merge --abort` fails here (there is no merge to abort), so do not run it.
+- **The merge started with no conflicts** (`MERGE_HEAD` exists and the list is empty): `git commit --no-edit` the merge as is, report that no resolution was needed, and stop. Skip the rest.
 - **Conflicts**: continue.
 
-**Cancelling:** until step 6 is done the user can stop at any time. Run `git merge --abort`, `git switch <original branch>` (or the recorded SHA), and offer to delete the work branch. After step 6, just switch back and keep the branch.
+**Cancelling:** until step 6 is done the user can stop at any time. If `MERGE_HEAD` exists, run `git merge --abort`. Then `git switch <original branch>` (or the recorded SHA), and offer to delete the work branch. After step 6, just switch back and keep the branch.
 
 ### 5. Handle conflicts that have no markers
 Conflicts such as binary files, modify/delete, rename/rename, submodules, file mode, and LFS pointers cannot be expressed as markers and cannot be left unmerged in a commit. `git status --short` shows them as `UD`, `DU`, `AU`, `UA`, `DD`, or `AA` on binary files. For each one:
