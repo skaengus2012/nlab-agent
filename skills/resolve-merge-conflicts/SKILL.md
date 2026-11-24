@@ -55,7 +55,12 @@ Name pattern: `merge/<source-slug>-into-<target-slug>-<yyyyMMdd>T<HHmmss>Z`
 - Validate: `git check-ref-format --branch "<name>"`.
 - If the name exists (`git show-ref --verify --quiet refs/heads/<name>`), append `-2`, `-3`, ... If a local branch literally named `merge` exists, the `merge/` prefix is impossible; ask the user for another prefix.
 - If other `merge/<source-slug>-into-<target-slug>-*` branches exist, ask the user to choose:
-  - **reuse**: `git switch <existing>`; if `git merge-base --is-ancestor <source> HEAD` succeeds the merge is already done, report it and stop; otherwise continue at step 4 on that branch.
+  - **reuse**: `git switch <existing>`, then look for committed conflict markers **before** the ancestor check. After step 6 the source is already an ancestor of the branch, so `--is-ancestor` alone cannot tell a finished branch from one that stopped at the marker commit:
+    ```bash
+    git grep -lE '^(<<<<<<<|\|\|\|\|\|\|\||>>>>>>>)( |$)' HEAD | sed 's/^HEAD://'     # non-empty output: markers are committed in these files
+    ```
+    - **Markers found**: the branch holds an unresolved marker commit (the earlier run stopped before step 9). Tell the user it is a broken-build state, take the printed files as the **marker files** list and the latest merge commit (`git log --merges -1`) as the marker commit, and continue at step 7. Check hits by hand for files that legitimately contain marker text, as in step 8.
+    - **No markers**: if `git merge-base --is-ancestor <source> HEAD` succeeds the merge is already done, report it and stop; otherwise continue at step 4 on that branch.
   - **delete and recreate**: only after the user confirms by name; `git branch -D <existing>` fails if it is checked out here or in another worktree, in which case fall back to creating a new one.
   - **create new**.
 
